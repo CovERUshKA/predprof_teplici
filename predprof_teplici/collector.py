@@ -2,6 +2,8 @@ import time
 import requests
 import database as db
 
+end_working = False
+
 # Влажность почвы
 def get_ground_hum(id):
     response = requests.get(f"https://dt.miet.ru/ppo_it/api/hum/{id}")
@@ -36,7 +38,7 @@ def get_air_temp_hum(id):
 def infinite_collect():
     print("Collector started")
 
-    while True:
+    while end_working == False:
         time_collected = round(time.time())
 
         all_ground_humidity = []
@@ -68,3 +70,5 @@ def infinite_collect():
         db.add_data_from_sensors(all_ground_humidity, all_air_temp_hum, time_collected)
 
         time.sleep(5)
+    
+    print("Collector ended")

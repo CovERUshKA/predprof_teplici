@@ -50,3 +50,7 @@ if __name__ == '__main__':
     t.start()
 
     app.run(debug=False,  port=80, host="0.0.0.0")
+
+    print("flask ended")
+
+    collector.end_working = True
