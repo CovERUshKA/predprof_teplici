@@ -1,6 +1,7 @@
 import threading
 import collector
 import database as db
+import asyncio
 
 from flask import Flask, jsonify, request
 
@@ -46,7 +47,7 @@ def index():
 
 if __name__ == '__main__':
 
-    t = threading.Thread(target=collector.infinite_collect)
+    t = threading.Thread(target=asyncio.run, args=(collector.infinite_collect(),))
     t.start()
 
     app.run(debug=False,  port=80, host="0.0.0.0")
