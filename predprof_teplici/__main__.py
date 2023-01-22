@@ -32,7 +32,34 @@ def sensors_data():
     if time_period == None:
         return ErrorResponse("No time_period provided or it is incorrect", 400)
 
-    air, ground = db.get_all_data(time_period)
+    air_raw_data, ground_raw_data = db.get_all_data(time_period)
+
+    air = [
+        [[], [], []],
+        [[], [], []],
+        [[], [], []],
+        [[], [], []]
+    ]
+
+    ground = [
+        [[], []],
+        [[], []],
+        [[], []],
+        [[], []],
+        [[], []],
+        [[], []]
+    ]
+
+    for sensor_id, temp, hum, timestamp in air_raw_data:
+        idx = sensor_id - 1
+        air[idx][0].append(temp)
+        air[idx][1].append(hum)
+        air[idx][2].append(timestamp)
+
+    for sensor_id, humidity, timestamp in ground_raw_data:
+        idx = sensor_id - 1
+        ground[idx][0].append(humidity)
+        ground[idx][1].append(timestamp)
 
     ret = {
         "air": air,
