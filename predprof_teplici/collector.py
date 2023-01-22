@@ -5,7 +5,6 @@ import asyncio
 import requests
 import database as db
 
-end_working = False
 
 def get_air_temp_hum(id):
     response = requests.get(f"{config.url_get_temp_hum}/{id}")
@@ -21,32 +20,40 @@ def get_air_temp_hum(id):
 async def aget_ground_hum(session : aiohttp.ClientSession, id):
     async with session.get(f"{config.url_get_hum}/{id}") as resp:
         jsoned = {}
+
         if resp.status == 200:
             jsoned = await resp.json(content_type=None)
+
             if jsoned == None:
                 jsoned = {}
+
         humidity = jsoned.get("humidity", None)
+
         return humidity
+
 
 # Влажность и температура воздуха
 async def aget_air_temp_hum(session : aiohttp.ClientSession, id):
     async with session.get(f"{config.url_get_temp_hum}/{id}") as resp:
         jsoned = {}
+        
         if resp.status == 200:
             jsoned = await resp.json(content_type=None)
+
             if jsoned == None:
                 jsoned = {}
+
         humidity = jsoned.get("humidity", None)
         temperature = jsoned.get("temperature", None)
+
         return temperature, humidity
 
+
 async def infinite_collect():
-    print("Collector started")
-
     async with aiohttp.ClientSession() as session:
-        while end_working == False:
-
+        while True:
             tasks = []
+
             for sensor_id in range(1, 7):
                 tasks.append(asyncio.ensure_future(aget_ground_hum(session, sensor_id)))
 
@@ -73,12 +80,12 @@ async def infinite_collect():
             avg_hum = None
 
             if len(temps) != 0:
-                avg_temp = sum(temps) / len(temps)
-            if len(hums) != 0:
-                avg_hum = sum(hums) / len(hums)
+                avg_temp = round(sum(temps) / len(temps), 2)
 
+            if len(hums) != 0:
+                avg_hum = round(sum(hums) / len(hums), 2)
+            
             db.add_data_from_sensors(all_ground_humidity, all_air_temp_hum, avg_temp, avg_hum, time_collected)
 
             time.sleep(5)
-    
-    print("Collector ended")
+            
