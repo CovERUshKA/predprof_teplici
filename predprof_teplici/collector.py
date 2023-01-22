@@ -1,4 +1,5 @@
 import time
+import config
 import aiohttp
 import asyncio
 import database as db
@@ -7,7 +8,7 @@ end_working = False
 
 # Влажность почвы
 async def get_ground_hum(session : aiohttp.ClientSession, id):
-    async with session.get(f"https://dt.miet.ru/ppo_it/api/hum/{id}") as resp:
+    async with session.get(f"{config.url_get_hum}/{id}") as resp:
         jsoned = {}
         if resp.status == 200:
             jsoned = await resp.json(content_type=None)
@@ -18,7 +19,7 @@ async def get_ground_hum(session : aiohttp.ClientSession, id):
 
 # Влажность и температура воздуха
 async def get_air_temp_hum(session : aiohttp.ClientSession, id):
-    async with session.get(f"https://dt.miet.ru/ppo_it/api/temp_hum/{id}") as resp:
+    async with session.get(f"{config.url_get_temp_hum}/{id}") as resp:
         jsoned = {}
         if resp.status == 200:
             jsoned = await resp.json(content_type=None)
