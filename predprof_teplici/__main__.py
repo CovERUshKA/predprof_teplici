@@ -11,9 +11,14 @@ from flask import Flask, jsonify, request, abort, make_response
 app = Flask(__name__)
 
 def SuccessResponse(result):
-    response = {"ok":True, "result":result}
-
-    return jsonify(response)
+    response_data = {"ok":True, "result":result}
+    
+    response = make_response(jsonify(response_data))
+    
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers["Content-Type"] = "application/json"
+    
+    return response
 
 #{
 #   ok: false,
