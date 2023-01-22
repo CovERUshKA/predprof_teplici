@@ -48,7 +48,25 @@ async def infinite_collect():
             all_air_temp_hum = rets[6:10]
             time_collected = round(time.time())
 
-            db.add_data_from_sensors(all_ground_humidity, all_air_temp_hum, time_collected)
+            temps = []
+            hums = []
+
+            for temp, hum in all_air_temp_hum:
+                if temp != None:
+                    temps.append(temp)
+                if hum != None:
+                    hums.append(hum)
+
+            #TODO: Что будет, если avg_temp или avg_hum будут равны None? Сделать тесты и т.п.
+            avg_temp = None
+            avg_hum = None
+
+            if len(temps) != 0:
+                avg_temp = sum(temps) / len(temps)
+            if len(hums) != 0:
+                avg_hum = sum(hums) / len(hums)
+
+            db.add_data_from_sensors(all_ground_humidity, all_air_temp_hum, avg_temp, avg_hum, time_collected)
 
             time.sleep(5)
     

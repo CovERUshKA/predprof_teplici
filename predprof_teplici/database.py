@@ -76,7 +76,7 @@ def add_air_temp_hum(sensor_id, temperature, humidity, time_collected):
 
     return True
 
-def add_data_from_sensors(ground_humidities, air_temps_hums, time_collected):
+def add_data_from_sensors(ground_humidities, air_temps_hums, avg_temp, avg_hum, time_collected):
     """Добавляем данные со всех датчиков в БД"""
 
     if ground_humidities == None:
@@ -100,12 +100,12 @@ def add_data_from_sensors(ground_humidities, air_temps_hums, time_collected):
 
         for i in range(4):
             cur.execute("INSERT into air (sensor_id, temperature, humidity, timestamp) values (?, ?, ?, ?)", (i+1, air_temps_hums[i][0], air_temps_hums[i][1], time_collected))
+
+        cur.execute("INSERT into air (sensor_id, temperature, humidity, timestamp) values (?, ?, ?, ?)", (5, avg_temp, avg_hum, time_collected))
         
         con.commit()
     finally:
         lock.release()
-
-    #execute_and_commit("INSERT into air (sensor_id, temperature, humidity, timestamp) values (?, ?, ?)", (sensor_id, temperature, humidity, time_collected))
 
     return True
 
@@ -116,11 +116,7 @@ def get_air_temp_hum(time_period):
 
     time_since = cur_time - time_period
 
-    #print(time_since)
-
     ret = execute_and_fetchall(f"SELECT temperature, humidity, timestamp from air where timestamp > ?", (time_since,))
-
-    #print(ret)
 
     return ret
 
@@ -130,10 +126,6 @@ def get_all_data(time_period):
     cur_time = round(time.time())
 
     time_since = cur_time - time_period
-
-    #print(time_since)
-
-    #ret = execute_and_fetchall("SELECT temperature, humidity, timestamp from air where timestamp > ?", (time_since,))
 
     try:
         lock.acquire(True)
@@ -147,7 +139,5 @@ def get_all_data(time_period):
         ground = cur.fetchall()
     finally:
         lock.release()
-
-    #print(ret)
 
     return air, ground
