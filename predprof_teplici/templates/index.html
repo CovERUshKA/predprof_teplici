@@ -1,1 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>React App</title>
+  </head>
+  <style>
+    .col{
+        display: inline-block;
+        width: 200px;
+        text-align: center;
+        vertical-align: top;
+    }
+    .mean{
+        padding: 10px;
+        border: none;
+        border-radius: 100vw;
+        transition: 0.2s;
+        width: 150px;
+    }
+    .mean:hover{
+        background-color: bisque;
+        cursor: pointer;
+    }
+    .mean:active{
+        background-color: rgb(243, 209, 166);
+        cursor: pointer;
+    }
+    .sensor{
+        padding: 7px;
+        border: none;
+        border-radius: 100vw;
+        transition: 0.2s;
+        margin-top: 10px;
+    }
+    .sensor:hover{
+        background-color: rgb(196, 253, 255);
+        cursor: pointer;
+    }
+    .sensor:active{
+        background-color: rgb(166, 187, 243);
+        cursor: pointer;
+    }
+    .param{
+        background-color: rgb(206, 219, 255);
+        margin: auto;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: none;
+        border-radius: 100vw;
+        transition: 0.2s;
+        width: 150px;
+    }
+  </style>
+  <body>
+    <div width="800" height="450">
+        <canvas id="GRAAAPH" ></canvas>
+    </div>
+    <div class="col">
+        <div class="param" id="mean_air_temp">
+            Ср. температура:  
+        </div>
+        <button class="mean" onclick="draw_graph('mean_air_temp')">
+            Ср. температура воздуха
+        </button>
+        <button class="sensor" onclick="draw_graph('air_sensor0')">
+            Сэнсор воздуха №1
+        </button>
+        <button class="sensor" onclick="draw_graph('air_sensor1')">
+            Сэнсор воздуха №2
+        </button>
+        <button class="sensor" onclick="draw_graph('air_sensor2')">
+            Сэнсор воздуха №3
+        </button>
+        <button class="sensor" onclick="draw_graph('air_sensor3')">
+            Сэнсор воздуха №4
+        </button>
+    </div>
+    <div class="col">
+        <button class="sensor" onclick="draw_graph('ground_sensor0')">
+            Влажность земли №1
+        </button>
+        <button class="sensor" onclick="draw_graph('ground_sensor1')">
+            Влажность земли №2
+        </button>
+        <button class="sensor" onclick="draw_graph('ground_sensor2')">
+            Влажность земли №3
+        </button>
+        <button class="sensor" onclick="draw_graph('ground_sensor3')">
+            Влажность земли №4
+        </button>
+        <button class="sensor" onclick="draw_graph('ground_sensor4')">
+            Влажность земли №5
+        </button>
+        <button class="sensor" onclick="draw_graph('ground_sensor5')">
+            Влажность земли №6
+        </button>
+    </div>
+    
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script>
+        let url = "http://127.0.0.1:80/api/sensors_data?time_period=20";
+        let ctx = document.getElementById('GRAAAPH').getContext("2d");
+        
+        function toDateTime(secs) {
+            var t = new Date(0);
+            t.setSeconds(secs);
+            return ' ' + t.getFullYear() + ' ' + (t.getMonth()+1) + ' ' + t.getDate() + ' ' + (t.getHours()) + ':' + t.getMinutes() + ':' + t.getSeconds();
+        }
+
+        function timeLabels(times){
+            for(let i = 0; i < times.length; i++){
+                times[i] = toDateTime(times[i]);
+            }
+            return times;
+        }
+
+        var dataset = {
+            'AirMean': {},
+            'AirSensors': [
+                {},
+                {},
+                {},
+                {}
+            ],
+            'GroundSensors': [
+                {},
+                {},
+                {},
+                {},
+                {},
+                {}
+            ]
+        }
+
+        var data = [];
+        
+        function update_dataset(){
+            dataset.AirMean.data = {
+                labels: timeLabels(data.air[4][2]),
+                datasets: [
+                {
+                    label: 'Ср. температура воздуха °C',
+                    backgroundColor: 'rgb(255, 80, 80)',
+                    borderColor: 'rgb(255, 80, 80)',
+                    data: data.air[4][0],
+                    fill: false
+                },
+                {
+                    label: 'Ср. влажность воздуха %',
+                    backgroundColor: 'rgb(120, 120, 255)',
+                    borderColor: 'rgb(120, 120, 255)',
+                    data: data.air[4][1],
+                    fill: false
+                }
+                ]
+            };
+  
+            for(let i = 0; i < 4; i++){
+                dataset.AirSensors[i].data = [
+                    {
+                        label: 'Температура воздуха °C ( Датчик' + i+1 + ' )',
+                        backgroundColor: 'rgb(255, 30, 30)',
+                        borderColor: 'rgb(255, 30, 30)',
+                        data: [data.air[i][0]],
+                        fill: false
+                    },
+                    {
+                        label: 'Влажность воздуха % ( Датчик' + i+1 + ' )',
+                        backgroundColor: 'rgb(255, 30, 30)',
+                        borderColor: 'rgb(255, 30, 30)',
+                        data: [data.air[i][1]],
+                        fill: false
+                    },
+                ];
+                dataset.AirSensors[i].time = timeLabels(data.air[i][2]);
+            }
+            
+            for(let i = 0; i < 6; i++){
+                dataset.GroundSensors[i].data = [
+                    {
+                        label: 'Влажность почвы % ( Датчик' + i+1 + ' )',
+                        backgroundColor: 'rgb(255, 30, 30)',
+                        borderColor: 'rgb(255, 30, 30)',
+                        data: data.ground[i][0],
+                        fill: false
+                    }
+                ];
+                dataset.GroundSensors[i].time = timeLabels(data.ground[i][1]);
+            }
+            draw_graph();
+        }
+        async function get_data_from_api(){
+            let response = await fetch(url);
+
+            if (response.ok){
+                let json = await response.json();
+                console.log(json)
+                data = json.result;
+                update_dataset();
+            }
+        }
+        get_data_from_api();
+        
+        var chart = new Chart(ctx, {
+            type: 'line',
+            data: dataset.AirMean.data,
+            
+            options:{
+                scales: {
+                    xAxes: [{         
+                        ticks: {
+                            autoSkip: false,
+                            maxRotation: 0,
+                            minRotation: 0
+                        },
+                        
+                        afterTickToLabelConversion: function(data){
+                            let xLabels = data.ticks;
+
+                            xLabels.forEach(function (labels, i) {
+                                if (i % 3 != 0){
+                                    xLabels[i] = '';
+                                }
+                            });
+                        } 
+                    }]   
+                }
+                
+
+
+            }
+        }); 
+
+
+        function draw_graph(name = 'mean_air_temp'){
+            let data;
+            let time;
+            chart.data = dataset.AirMean.data;
+            chart.update();
+        }
+        
+    </script>
+  </body>
+</html>
 
