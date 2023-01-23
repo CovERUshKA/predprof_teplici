@@ -151,7 +151,7 @@ def fork_drive():
             "state": state
         }
 
-        resp = requests.patch(config.url_fork_drive, json=body)
+        resp = requests.patch(config.url_patch_fork_drive, json=body)
         if resp.status_code == 200 or config.test_mode:
             settings["fork_drive"] = state
 
@@ -173,7 +173,7 @@ def total_hum():
             "state": state
         }
 
-        resp = requests.patch(config.url_total_hum, json=body)
+        resp = requests.patch(config.url_patch_total_hum, json=body)
         if resp.status_code == 200 or config.test_mode:
             settings["total_hum"] = state
 
