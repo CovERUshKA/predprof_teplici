@@ -49,13 +49,15 @@ def ErrorResponse(description, error_code):
 
 def check_parameters(data, parameters):
     try:
-        assert isinstance(data, dict), 'data'
+        assert type(data) == dict, ('data', 404)
 
         for param in parameters:
-            if param[0] in data == False:
-                assert isinstance(data.get(param[0]), param[1]), param[0]
+            if (param[0] in data) == True:
+                assert type(data.get(param[0])) == param[1], (param[0], 400)
+            else:
+                raise AssertionError((param[0], 404))
     except AssertionError as e:
-        abort(ErrorResponse(f"field \"{e}\" incorrect", 404))
+        abort(ErrorResponse(f"field \"{e.args[0][0]}\" incorrect", e.args[0][1]))
 
 # http://127.0.0.1:80/api/sensors_data?time_period=<time_in_seconds>
 @app.route('/api/sensors_data')
@@ -139,7 +141,7 @@ def fork_drive():
 
     check_parameters(data, (("state", int),))
 
-    state =  data.get("state", None, type=int)
+    state =  data.get("state", None)
     
     if state in range(0, 2) == False:
         return ErrorResponse("field \"state\" incorrect", 400)
@@ -162,7 +164,7 @@ def total_hum():
 
     check_parameters(data, (("state", int),))
 
-    state =  data.get("state", None, type=int)
+    state =  data.get("state", None)
     if state in range(0, 2) == False:
         return ErrorResponse("field \"state\" incorrect", 400)
 
