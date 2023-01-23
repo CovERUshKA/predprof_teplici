@@ -10,7 +10,7 @@ from flask import Flask, jsonify, request, abort, make_response
 
 app = Flask(__name__)
 
-state = {
+settings = {
     "parameters": {
         "T": None,
         "H": None,
@@ -109,7 +109,7 @@ def sensors_data():
 # http://127.0.0.1:80/api/state
 @app.route('/api/state')
 def cur_state():
-    return SuccessResponse(state)
+    return SuccessResponse(settings)
 
 # http://127.0.0.1:80/api/parameters
 @app.route('/api/parameters', methods=['PATCH'])
@@ -128,11 +128,11 @@ def parameters():
     if Hb < 0 or Hb > 100:
         return ErrorResponse("field \"Hb\" incorrect", 400)
 
-    state["parameters"]["T"] = T
-    state["parameters"]["H"] = H
-    state["parameters"]["Hb"] = Hb
+    settings["parameters"]["T"] = T
+    settings["parameters"]["H"] = H
+    settings["parameters"]["Hb"] = Hb
 
-    return SuccessResponse(state["parameters"])
+    return SuccessResponse(settings["parameters"])
 
 # http://127.0.0.1:80/api/fork_drive
 @app.route('/api/fork_drive', methods=['PATCH'])
@@ -146,16 +146,16 @@ def fork_drive():
     if state in range(0, 2) == False:
         return ErrorResponse("field \"state\" incorrect", 400)
 
-    if state != state["fork_drive"]:
+    if state != settings["fork_drive"]:
         body = {
             "state": state
         }
 
         resp = requests.patch(config.url_fork_drive, json=body)
         if resp.status_code == 200 or config.test_mode:
-            state["fork_drive"] = state
+            settings["fork_drive"] = state
 
-    return SuccessResponse({"state": state["fork_drive"]})
+    return SuccessResponse({"state": settings["fork_drive"]})
 
 # http://127.0.0.1:80/api/total_hum
 @app.route('/api/total_hum', methods=['PATCH'])
@@ -168,18 +168,16 @@ def total_hum():
     if state in range(0, 2) == False:
         return ErrorResponse("field \"state\" incorrect", 400)
 
-    if state != state["total_hum"]:
+    if state != settings["total_hum"]:
         body = {
             "state": state
         }
 
         resp = requests.patch(config.url_total_hum, json=body)
         if resp.status_code == 200 or config.test_mode:
-            state["total_hum"] = state
+            settings["total_hum"] = state
 
-    state["total_hum"] = state
-
-    return SuccessResponse({"state": state["total_hum"]})
+    return SuccessResponse({"state": settings["total_hum"]})
 
 # http://127.0.0.1:80/api/emergency
 @app.route('/api/emergency', methods=['PATCH'])
@@ -190,9 +188,9 @@ def emergency():
 
     emergency_state = data["state"]
     if emergency_state in range(0, 2):
-        state["emergency"] = emergency_state
+        settings["emergency"] = emergency_state
 
-    return SuccessResponse({"state": state["emergency"]})
+    return SuccessResponse({"state": settings["emergency"]})
 
 @app.route('/')
 def index():
