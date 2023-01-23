@@ -10,6 +10,18 @@ from flask import Flask, jsonify, request, abort, make_response
 
 app = Flask(__name__)
 
+state = {
+    "parameters": {
+        "T": None,
+        "H": None,
+        "Hb": None
+    },
+    "fork_drive": None,
+    "total_hum": None,
+    "emergency": 0,
+    "watering": [None, None, None, None, None, None]
+}
+
 def SuccessResponse(result):
     response_data = {"ok":True, "result":result}
     
@@ -26,21 +38,14 @@ def SuccessResponse(result):
 #   description: "wewewe"
 #}
 def ErrorResponse(description, error_code):
-    response = {"ok":False, "error_code":error_code, "description":description}
+    response_data = {"ok":False, "error_code":error_code, "description":description}
 
-    return jsonify(response), error_code
+    response = make_response(jsonify(response_data), error_code)
 
-state = {
-    "parameters": {
-        "T": None,
-        "H": None,
-        "Hb": None
-    },
-    "fork_drive": None,
-    "total_hum": None,
-    "emergency": 0,
-    "watering": [None, None, None, None, None, None]
-}
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers["Content-Type"] = "application/json"
+
+    return response
 
 def check_parameters(data, parameters):
     try:
@@ -50,7 +55,7 @@ def check_parameters(data, parameters):
             if param[0] in data == False:
                 assert isinstance(data.get(param[0]), param[1]), param[0]
     except AssertionError as e:
-        abort(make_response(jsonify({"error": f"field \"{e}\" incorrect"}), 404))
+        abort(ErrorResponse(f"field \"{e}\" incorrect", 404))
 
 # http://127.0.0.1:80/api/sensors_data?time_period=<time_in_seconds>
 @app.route('/api/sensors_data')
@@ -92,17 +97,17 @@ def sensors_data():
         ground[idx][0].append(humidity)
         ground[idx][1].append(timestamp)
 
-    response = {
+    result = {
         "air": air,
         "ground": ground
     }
 
-    return SuccessResponse(response)
+    return SuccessResponse(result)
 
 # http://127.0.0.1:80/api/state
 @app.route('/api/state')
 def cur_state():
-    return jsonify(state)
+    return SuccessResponse(state)
 
 # http://127.0.0.1:80/api/parameters
 @app.route('/api/parameters', methods=['PATCH'])
@@ -116,16 +121,16 @@ def parameters():
     Hb =  data.get("Hb", None)
     
     if H < 0 or H > 100:
-        abort(make_response(jsonify({"error": f"field \"H\" incorrect"}), 400))
+        return ErrorResponse("field \"H\" incorrect", 400)
 
     if Hb < 0 or Hb > 100:
-        abort(make_response(jsonify({"error": f"field \"Hb\" incorrect"}), 400))
+        return ErrorResponse("field \"Hb\" incorrect", 400)
 
     state["parameters"]["T"] = T
     state["parameters"]["H"] = H
     state["parameters"]["Hb"] = Hb
 
-    return jsonify(state["parameters"])
+    return SuccessResponse(state["parameters"])
 
 # http://127.0.0.1:80/api/fork_drive
 @app.route('/api/fork_drive', methods=['PATCH'])
@@ -137,7 +142,7 @@ def fork_drive():
     state =  data.get("state", None, type=int)
     
     if state in range(0, 2) == False:
-        abort(make_response(jsonify({"error": f"field \"state\" incorrect"}), 400))
+        return ErrorResponse("field \"state\" incorrect", 400)
 
     if state != state["fork_drive"]:
         body = {
@@ -148,7 +153,7 @@ def fork_drive():
         if resp.status_code == 200 or config.test_mode:
             state["fork_drive"] = state
 
-    return jsonify({"state": state["fork_drive"]})
+    return SuccessResponse({"state": state["fork_drive"]})
 
 # http://127.0.0.1:80/api/total_hum
 @app.route('/api/total_hum', methods=['PATCH'])
@@ -159,7 +164,7 @@ def total_hum():
 
     state =  data.get("state", None, type=int)
     if state in range(0, 2) == False:
-        abort(make_response(jsonify({"error": f"field \"state\" incorrect"}), 400))
+        return ErrorResponse("field \"state\" incorrect", 400)
 
     if state != state["total_hum"]:
         body = {
@@ -172,7 +177,7 @@ def total_hum():
 
     state["total_hum"] = state
 
-    return jsonify({"state": state["total_hum"]})
+    return SuccessResponse({"state": state["total_hum"]})
 
 # http://127.0.0.1:80/api/emergency
 @app.route('/api/emergency', methods=['PATCH'])
@@ -185,7 +190,7 @@ def emergency():
     if emergency_state in range(0, 2):
         state["emergency"] = emergency_state
 
-    return jsonify({"state": state["emergency"]})
+    return SuccessResponse({"state": state["emergency"]})
 
 @app.route('/')
 def index():
