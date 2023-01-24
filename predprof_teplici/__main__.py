@@ -6,7 +6,7 @@ import time
 import requests
 import config
 
-from flask import Flask, jsonify, request, abort, make_response
+from flask import Flask, jsonify, request, abort, make_response, render_template
 
 app = Flask(__name__)
 
@@ -192,9 +192,10 @@ def emergency():
 
     return SuccessResponse({"state": settings["emergency"]})
 
+# http://127.0.0.1:80
 @app.route('/')
 def index():
-    return "Hello, World!"
+    return render_template("index.html")
 
 if __name__ == '__main__':
 
