@@ -76,11 +76,9 @@ async def infinite_collect():
                 avg_temp = sum(temps) / len(temps)
             if len(hums) != 0:
                 avg_hum = sum(hums) / len(hums)
-            try:
-                db.add_data_from_sensors(all_ground_humidity, all_air_temp_hum, avg_temp, avg_hum, time_collected)
-            except Exception as Error:
-                print(Error)
-            finally:
-                time.sleep(5)
+
+            db.add_data_from_sensors(all_ground_humidity, all_air_temp_hum, avg_temp, avg_hum, time_collected)
+
+            time.sleep(5)
     
     print("Collector ended")
