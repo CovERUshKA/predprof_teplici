@@ -73,9 +73,9 @@ async def infinite_collect():
             avg_hum = None
 
             if len(temps) != 0:
-                avg_temp = sum(temps) / len(temps)
+                avg_temp = round(sum(temps) / len(temps), 2)
             if len(hums) != 0:
-                avg_hum = sum(hums) / len(hums)
+                avg_hum = round(sum(hums) / len(hums), 2)
 
             db.add_data_from_sensors(all_ground_humidity, all_air_temp_hum, avg_temp, avg_hum, time_collected)
 
