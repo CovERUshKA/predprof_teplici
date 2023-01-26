@@ -29,7 +29,6 @@ async def aget_ground_hum(session : aiohttp.ClientSession, id):
             humidity = jsoned.get("humidity", None)
             return humidity
     except aiohttp.ClientError as e:
-        print(e)
         return None
 # Влажность и температура воздуха
 async def aget_air_temp_hum(session : aiohttp.ClientSession, id):
@@ -44,7 +43,6 @@ async def aget_air_temp_hum(session : aiohttp.ClientSession, id):
             temperature = jsoned.get("temperature", None)
             return temperature, humidity
     except aiohttp.ClientError as e:
-        print(e)
         return None, None
         
 
