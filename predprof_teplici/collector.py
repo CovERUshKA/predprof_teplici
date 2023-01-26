@@ -4,7 +4,7 @@ import aiohttp
 import asyncio
 import requests
 import database as db
-
+import sqlite3
 end_working = False
 
 def get_air_temp_hum(id):
@@ -19,26 +19,34 @@ def get_air_temp_hum(id):
 
 # Влажность почвы
 async def aget_ground_hum(session : aiohttp.ClientSession, id):
-    async with session.get(f"{config.url_get_hum}/{id}") as resp:
-        jsoned = {}
-        if resp.status == 200:
-            jsoned = await resp.json(content_type=None)
-            if jsoned == None:
-                jsoned = {}
-        humidity = jsoned.get("humidity", None)
-        return humidity
-
+    try:
+        async with session.get(f"{config.url_get_hum}/{id}") as resp:
+            jsoned = {}
+            if resp.status == 200:
+                jsoned = await resp.json(content_type=None)
+                if jsoned == None:
+                    jsoned = {}
+            humidity = jsoned.get("humidity", None)
+            return humidity
+    except aiohttp.ClientError as e:
+        print(e)
+        return None
 # Влажность и температура воздуха
 async def aget_air_temp_hum(session : aiohttp.ClientSession, id):
-    async with session.get(f"{config.url_get_temp_hum}/{id}") as resp:
-        jsoned = {}
-        if resp.status == 200:
-            jsoned = await resp.json(content_type=None)
-            if jsoned == None:
-                jsoned = {}
-        humidity = jsoned.get("humidity", None)
-        temperature = jsoned.get("temperature", None)
-        return temperature, humidity
+    try:
+        async with session.get(f"{config.url_get_temp_hum}/{id}") as resp:
+            jsoned = {}
+            if resp.status == 200:
+                jsoned = await resp.json(content_type=None)
+                if jsoned == None:
+                    jsoned = {}
+            humidity = jsoned.get("humidity", None)
+            temperature = jsoned.get("temperature", None)
+            return temperature, humidity
+    except aiohttp.ClientError as e:
+        print(e)
+        return None, None
+        
 
 async def infinite_collect():
     print("Collector started")
@@ -76,10 +84,11 @@ async def infinite_collect():
                 avg_temp = sum(temps) / len(temps)
             if len(hums) != 0:
                 avg_hum = sum(hums) / len(hums)
+                
             try:
                 db.add_data_from_sensors(all_ground_humidity, all_air_temp_hum, avg_temp, avg_hum, time_collected)
-            except Exception as Error:
-                print(Error)
+            except sqlite3.IntegrityError as e:
+                print("Error: ", e)
             finally:
                 time.sleep(5)
     
