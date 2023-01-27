@@ -152,7 +152,7 @@ def fork_drive():
         }
 
         resp = requests.patch(config.url_patch_fork_drive, params=parameters)
-        if resp.status_code == 200 or config.test_mode:
+        if resp.status_code == 200:
             settings["fork_drive"] = state
         else:
             return ErrorResponse("Unable to do patch request to greenhouse", 500)
@@ -176,7 +176,7 @@ def total_hum():
         }
 
         resp = requests.patch(config.url_patch_total_hum, params=parameters)
-        if resp.status_code == 200 or config.test_mode:
+        if resp.status_code == 200:
             settings["total_hum"] = state
         else:
             return ErrorResponse("Unable to do patch request to greenhouse", 500)
