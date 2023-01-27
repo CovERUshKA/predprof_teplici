@@ -7,8 +7,10 @@ import requests
 import config
 
 from flask import Flask, jsonify, request, abort, make_response, render_template
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 settings = {
     "parameters": {
