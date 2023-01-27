@@ -147,13 +147,15 @@ def fork_drive():
         return ErrorResponse("field \"state\" incorrect", 400)
 
     if state != settings["fork_drive"]:
-        body = {
+        parameters = {
             "state": state
         }
 
-        resp = requests.patch(config.url_patch_fork_drive, json=body)
+        resp = requests.patch(config.url_patch_fork_drive, params=parameters)
         if resp.status_code == 200 or config.test_mode:
             settings["fork_drive"] = state
+        else:
+            return ErrorResponse("Unable to do patch request to greenhouse", 500)
 
     return SuccessResponse({"state": settings["fork_drive"]})
 
@@ -169,13 +171,15 @@ def total_hum():
         return ErrorResponse("field \"state\" incorrect", 400)
 
     if state != settings["total_hum"]:
-        body = {
+        parameters = {
             "state": state
         }
 
-        resp = requests.patch(config.url_patch_total_hum, json=body)
+        resp = requests.patch(config.url_patch_total_hum, params=parameters)
         if resp.status_code == 200 or config.test_mode:
             settings["total_hum"] = state
+        else:
+            return ErrorResponse("Unable to do patch request to greenhouse", 500)
 
     return SuccessResponse({"state": settings["total_hum"]})
 
