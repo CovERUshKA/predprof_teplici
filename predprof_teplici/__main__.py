@@ -6,9 +6,11 @@ import time
 import requests
 import config
 
-from flask import Flask, jsonify, request, abort, make_response
+from flask import Flask, jsonify, request, abort, make_response, render_template
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 settings = {
     "parameters": {
@@ -147,13 +149,15 @@ def fork_drive():
         return ErrorResponse("field \"state\" incorrect", 400)
 
     if state != settings["fork_drive"]:
-        body = {
+        parameters = {
             "state": state
         }
 
-        resp = requests.patch(config.url_patch_fork_drive, json=body)
-        if resp.status_code == 200 or config.test_mode:
+        resp = requests.patch(config.url_patch_fork_drive, params=parameters)
+        if resp.status_code == 200:
             settings["fork_drive"] = state
+        else:
+            return ErrorResponse("Unable to do patch request to greenhouse", 500)
 
     return SuccessResponse({"state": settings["fork_drive"]})
 
@@ -169,13 +173,15 @@ def total_hum():
         return ErrorResponse("field \"state\" incorrect", 400)
 
     if state != settings["total_hum"]:
-        body = {
+        parameters = {
             "state": state
         }
 
-        resp = requests.patch(config.url_patch_total_hum, json=body)
-        if resp.status_code == 200 or config.test_mode:
+        resp = requests.patch(config.url_patch_total_hum, params=parameters)
+        if resp.status_code == 200:
             settings["total_hum"] = state
+        else:
+            return ErrorResponse("Unable to do patch request to greenhouse", 500)
 
     return SuccessResponse({"state": settings["total_hum"]})
 
@@ -192,9 +198,10 @@ def emergency():
 
     return SuccessResponse({"state": settings["emergency"]})
 
+# http://127.0.0.1:80
 @app.route('/')
 def index():
-    return "Hello, World!"
+    return render_template("index.html")
 
 if __name__ == '__main__':
 
