@@ -3,8 +3,10 @@ import config
 import aiohttp
 import asyncio
 import requests
-import database as db
+from . import database as db
 import sqlite3
+import config
+
 end_working = False
 
 def get_air_temp_hum(id):
@@ -44,7 +46,6 @@ async def aget_air_temp_hum(session : aiohttp.ClientSession, id):
             return temperature, humidity
     except aiohttp.ClientError as e:
         return None, None
-        
 
 async def infinite_collect():
     print("Collector started")
