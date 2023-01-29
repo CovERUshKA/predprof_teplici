@@ -41,27 +41,27 @@ def execute_and_fetchall(sql, parameters = ()):
 
     return ret
 
-def add_ground_hums(sensor_id, humidities, time_collected):
+def add_ground_hum(sensor_id, humidity, time_collected = None):
     """Добавляем данные о влажности земли"""
 
     if humidity == None:
         humidity = 0
 
     if sensor_id == None:
-        raise Exception(("No air sensor id"))
+        raise Exception("No air sensor id")
 
     if time_collected == None:
-        raise Exception(("No time when ground hum data been collected"))
+        time_collected = round(time.time())
     
-    execute_and_commit("INSERT into ground (humidity, timestamp) values (?, ?)", (humidity, time_collected))
+    execute_and_commit("INSERT into ground (sensor_id, humidity, timestamp) values (?, ?, ?)", (sensor_id, humidity, time_collected))
 
     return True
 
-def add_air_temp_hum(sensor_id, temperature, humidity, time_collected):
+def add_air_temp_hum(sensor_id, temperature, humidity, time_collected = None):
     """Добавляем данные о температуре и влажности воздуха"""
 
     if sensor_id == None:
-        raise Exception(("No air sensor id"))
+        raise Exception("No air sensor id")
 
     if temperature == None:
         temperature = 0
@@ -70,9 +70,9 @@ def add_air_temp_hum(sensor_id, temperature, humidity, time_collected):
         humidity = 0
 
     if time_collected == None:
-        raise Exception(("No time when data been collected"))
+        time_collected = round(time.time())
 
-    execute_and_commit("INSERT into air (sensor_id, temperature, humidity, timestamp) values (?, ?, ?)", (sensor_id, temperature, humidity, time_collected))
+    execute_and_commit("INSERT into air (sensor_id, temperature, humidity, timestamp) values (?, ?, ?, ?)", (sensor_id, temperature, humidity, time_collected))
 
     return True
 

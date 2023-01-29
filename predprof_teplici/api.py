@@ -215,3 +215,49 @@ def emergency():
         current_app.config["settings"]["emergency"] = emergency_state
 
     return SuccessResponse({"state": current_app.config["settings"]["emergency"]})
+
+# http://127.0.0.1:80/api/add_temp_hum
+@bp.route('/add_temp_hum', methods=['POST'])
+def add_temp_hum():
+    data = request.get_json()
+
+    check_parameters(data, (("id", int), ("temperature", float), ("humidity", float)))
+
+    id =  data.get("id", None)
+    if not id in range(1, 5):
+        return ErrorResponse("field \"id\" incorrect", 400)
+
+    temperature =  data.get("temperature", None)
+    humidity =  data.get("humidity", None)
+
+    db.add_air_temp_hum(id, temperature, humidity)
+
+    resp_data = {
+        "id": id,
+        "temperature": temperature,
+        "humidity": humidity
+    }
+
+    return SuccessResponse(resp_data)
+
+# http://127.0.0.1:80/api/add_hum
+@bp.route('/add_hum', methods=['POST'])
+def add_hum():
+    data = request.get_json()
+
+    check_parameters(data, (("id", int), ("humidity", float)))
+
+    id =  data.get("id", None)
+    if not id in range(1, 7):
+        return ErrorResponse("field \"id\" incorrect", 400)
+
+    humidity =  data.get("humidity", None)
+
+    db.add_ground_hum(id, humidity)
+
+    resp_data = {
+        "id": id,
+        "humidity": humidity
+    }
+
+    return SuccessResponse(resp_data)
