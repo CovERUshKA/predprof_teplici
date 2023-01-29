@@ -116,3 +116,63 @@ def test_watering(client : FlaskClient, app):
     }
     response = client.patch("/api/watering", json=json)
     assert response.status_code == 400
+
+def test_add_hum(client : FlaskClient, app):
+    json = {
+        "id": 1,
+        "humidity": 11.2
+    }
+    response = client.post("/api/add_hum", json=json)
+    assert response.status_code == 200
+
+    json = {
+        "id": 7,
+        "humidity": 11.2
+    }
+    response = client.post("/api/add_hum", json=json)
+    assert response.status_code == 400
+
+    json = {
+        "id": 1,
+        "humidity": 11
+    }
+    response = client.post("/api/add_hum", json=json)
+    assert response.status_code == 400
+
+    json = {
+        "id": 1
+    }
+    response = client.post("/api/add_hum", json=json)
+    assert response.status_code == 404
+
+def test_add_temp_hum(client : FlaskClient, app):
+    json = {
+        "id": 1,
+        "temperature": 11.3,
+        "humidity": 11.2
+    }
+    response = client.post("/api/add_temp_hum", json=json)
+    assert response.status_code == 200
+
+    json = {
+        "id": 1,
+        "temperature": 11,
+        "humidity": 11.2
+    }
+    response = client.post("/api/add_temp_hum", json=json)
+    assert response.status_code == 400
+
+    json = {
+        "id": 1,
+        "humidity": 11.2
+    }
+    response = client.post("/api/add_temp_hum", json=json)
+    assert response.status_code == 404
+
+    json = {
+        "id": 1,
+        "temperature_invalid": 11,
+        "humidity": 11.2
+    }
+    response = client.post("/api/add_temp_hum", json=json)
+    assert response.status_code == 404
