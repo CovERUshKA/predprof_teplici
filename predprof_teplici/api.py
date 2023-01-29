@@ -128,7 +128,7 @@ def fork_drive():
 
     state =  data.get("state", None)
     
-    if state in range(0, 2) == False:
+    if not state in range(0, 2):
         return ErrorResponse("field \"state\" incorrect", 400)
 
     if state != current_app.config["settings"]["fork_drive"]:
@@ -152,7 +152,7 @@ def total_hum():
     check_parameters(data, (("state", int),))
 
     state =  data.get("state", None)
-    if state in range(0, 2) == False:
+    if not state in range(0, 2):
         return ErrorResponse("field \"state\" incorrect", 400)
 
     if state != current_app.config["settings"]["total_hum"]:
@@ -167,6 +167,40 @@ def total_hum():
             return ErrorResponse("Unable to do patch request to greenhouse", 500)
 
     return SuccessResponse({"state": current_app.config["settings"]["total_hum"]})
+
+# http://127.0.0.1:80/api/watering
+@bp.route('/watering', methods=['PATCH'])
+def watering():
+    data = request.get_json()
+
+    check_parameters(data, (("id", int), ("state", int)))
+
+    id =  data.get("id", None)
+    if not id in range(1, 7):
+        return ErrorResponse("field \"id\" incorrect", 400)
+
+    state =  data.get("state", None)
+    if not state in range(0, 2):
+        return ErrorResponse("field \"state\" incorrect", 400)
+
+    if state != current_app.config["settings"]["watering"][id - 1]:
+        parameters = {
+            "id": id,
+            "state": state
+        }
+
+        resp = requests.patch(current_app.config["urls"]["url_patch_watering"], params=parameters)
+        if resp.status_code == 200:
+            current_app.config["settings"]["watering"][id - 1] = state
+        else:
+            return ErrorResponse("Unable to do patch request to greenhouse", 500)
+
+    resp_data = {
+        "id": id,
+        "state": state
+    }
+
+    return SuccessResponse(resp_data)
 
 # http://127.0.0.1:80/api/emergency
 @bp.route('/emergency', methods=['PATCH'])

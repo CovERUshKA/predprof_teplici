@@ -73,3 +73,46 @@ def test_fork_drive(client : FlaskClient, app):
 
     response = client.patch("/api/fork_drive", json={})
     assert response.status_code == 404
+
+def test_watering(client : FlaskClient, app):
+    json = {
+        "id": 1,
+        "state": 1
+    }
+    response = client.patch("/api/watering", json=json)
+    assert response.status_code == 200
+    assert app.config["settings"]["watering"][0] == json["state"]
+
+    json = {
+        "id": 7
+    }
+    response = client.patch("/api/watering", json=json)
+    assert response.status_code == 404
+
+    json = {
+        "id": 7,
+        "state": None
+    }
+    response = client.patch("/api/watering", json=json)
+    assert response.status_code == 400
+
+    json = {
+        "id": 7,
+        "state": "1"
+    }
+    response = client.patch("/api/watering", json=json)
+    assert response.status_code == 400
+
+    json = {
+        "id": 1,
+        "state": 2
+    }
+    response = client.patch("/api/watering", json=json)
+    assert response.status_code == 400
+
+    json = {
+        "id": 7,
+        "state": 1
+    }
+    response = client.patch("/api/watering", json=json)
+    assert response.status_code == 400
