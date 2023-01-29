@@ -1,28 +1,12 @@
-import threading
-import collector
-import database as db
-import asyncio
-import time
 import requests
-import config
+from . import greenhouse_api
+from predprof_teplici import database as db
 
-from flask import Flask, jsonify, request, abort, make_response, render_template
-from flask_cors import CORS
+from flask import (
+    Blueprint, request, make_response, jsonify, abort, current_app
+)
 
-app = Flask(__name__)
-CORS(app)
-
-settings = {
-    "parameters": {
-        "T": None,
-        "H": None,
-        "Hb": None
-    },
-    "fork_drive": None,
-    "total_hum": None,
-    "emergency": 0,
-    "watering": [None, None, None, None, None, None]
-}
+bp = Blueprint('api', __name__, url_prefix='/api')
 
 def SuccessResponse(result):
     response_data = {"ok":True, "result":result}
@@ -62,7 +46,7 @@ def check_parameters(data, parameters):
         abort(ErrorResponse(f"field \"{e.args[0][0]}\" incorrect", e.args[0][1]))
 
 # http://127.0.0.1:80/api/sensors_data?time_period=<time_in_seconds>
-@app.route('/api/sensors_data')
+@bp.route('/sensors_data')
 def sensors_data():
     arguments = request.args
 
@@ -109,12 +93,12 @@ def sensors_data():
     return SuccessResponse(result)
 
 # http://127.0.0.1:80/api/state
-@app.route('/api/state')
+@bp.route('/state')
 def cur_state():
-    return SuccessResponse(settings)
+    return SuccessResponse(current_app.config["settings"])
 
 # http://127.0.0.1:80/api/parameters
-@app.route('/api/parameters', methods=['PATCH'])
+@bp.route('/parameters', methods=['PATCH'])
 def parameters():
     data : dict = request.get_json()
 
@@ -130,14 +114,14 @@ def parameters():
     if Hb < 0 or Hb > 100:
         return ErrorResponse("field \"Hb\" incorrect", 400)
 
-    settings["parameters"]["T"] = T
-    settings["parameters"]["H"] = H
-    settings["parameters"]["Hb"] = Hb
+    current_app.config["settings"]["parameters"]["T"] = T
+    current_app.config["settings"]["parameters"]["H"] = H
+    current_app.config["settings"]["parameters"]["Hb"] = Hb
 
-    return SuccessResponse(settings["parameters"])
+    return SuccessResponse(current_app.config["settings"]["parameters"])
 
 # http://127.0.0.1:80/api/fork_drive
-@app.route('/api/fork_drive', methods=['PATCH'])
+@bp.route('/fork_drive', methods=['PATCH'])
 def fork_drive():
     data = request.get_json()
 
@@ -148,21 +132,21 @@ def fork_drive():
     if not state in range(0, 2):
         return ErrorResponse("field \"state\" incorrect", 400)
 
-    if state != settings["fork_drive"]:
+    if state != current_app.config["settings"]["fork_drive"]:
         parameters = {
             "state": state
         }
 
-        resp = requests.patch(config.url_patch_fork_drive, params=parameters)
+        resp = requests.patch(greenhouse_api.url_patch_fork_drive, params=parameters)
         if resp.status_code == 200:
-            settings["fork_drive"] = state
+            current_app.config["settings"]["fork_drive"] = state
         else:
             return ErrorResponse("Unable to do patch request to greenhouse", 500)
 
-    return SuccessResponse({"state": settings["fork_drive"]})
+    return SuccessResponse({"state": current_app.config["settings"]["fork_drive"]})
 
 # http://127.0.0.1:80/api/total_hum
-@app.route('/api/total_hum', methods=['PATCH'])
+@bp.route('/total_hum', methods=['PATCH'])
 def total_hum():
     data = request.get_json()
 
@@ -172,21 +156,21 @@ def total_hum():
     if not state in range(0, 2):
         return ErrorResponse("field \"state\" incorrect", 400)
 
-    if state != settings["total_hum"]:
+    if state != current_app.config["settings"]["total_hum"]:
         parameters = {
             "state": state
         }
 
-        resp = requests.patch(config.url_patch_total_hum, params=parameters)
+        resp = requests.patch(greenhouse_api.url_patch_total_hum, params=parameters)
         if resp.status_code == 200:
-            settings["total_hum"] = state
+            current_app.config["settings"]["total_hum"] = state
         else:
             return ErrorResponse("Unable to do patch request to greenhouse", 500)
 
-    return SuccessResponse({"state": settings["total_hum"]})
+    return SuccessResponse({"state": current_app.config["settings"]["total_hum"]})
 
 # http://127.0.0.1:80/api/watering
-@app.route('/api/watering', methods=['PATCH'])
+@bp.route('/watering', methods=['PATCH'])
 def watering():
     data = request.get_json()
 
@@ -200,15 +184,15 @@ def watering():
     if not state in range(0, 2):
         return ErrorResponse("field \"state\" incorrect", 400)
 
-    if state != settings["watering"][id - 1]:
+    if state != current_app.config["settings"]["watering"][id - 1]:
         parameters = {
             "id": id,
             "state": state
         }
 
-        resp = requests.patch(config.url_patch_watering, params=parameters)
+        resp = requests.patch(greenhouse_api.url_patch_watering, params=parameters)
         if resp.status_code == 200:
-            settings["watering"][id - 1] = state
+            current_app.config["settings"]["watering"][id - 1] = state
         else:
             return ErrorResponse("Unable to do patch request to greenhouse", 500)
 
@@ -220,7 +204,7 @@ def watering():
     return SuccessResponse(resp_data)
 
 # http://127.0.0.1:80/api/emergency
-@app.route('/api/emergency', methods=['PATCH'])
+@bp.route('/emergency', methods=['PATCH'])
 def emergency():
     data = request.get_json()
 
@@ -228,22 +212,6 @@ def emergency():
 
     emergency_state = data["state"]
     if emergency_state in range(0, 2):
-        settings["emergency"] = emergency_state
+        current_app.config["settings"]["emergency"] = emergency_state
 
-    return SuccessResponse({"state": settings["emergency"]})
-
-# http://127.0.0.1:80
-@app.route('/')
-def index():
-    return render_template("index.html")
-
-if __name__ == '__main__':
-
-    t = threading.Thread(target=asyncio.run, args=(collector.infinite_collect(),))
-    t.start()
-
-    app.run(debug=False,  port=80, host="0.0.0.0")
-
-    print("flask ended")
-
-    collector.end_working = True
+    return SuccessResponse({"state": current_app.config["settings"]["emergency"]})
