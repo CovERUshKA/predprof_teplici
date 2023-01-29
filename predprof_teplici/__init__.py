@@ -7,11 +7,6 @@ def create_app():
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     CORS(app)
-    
-    #app.config.from_file("config.json", load=json.load)
-    f = open("instance/config.json")
-    data = json.load(f)
-    app.config["urls"] = data
 
     app.config["settings"] = {
         "parameters": {

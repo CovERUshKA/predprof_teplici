@@ -1,16 +1,15 @@
 import time
-import config
+from . import greenhouse_api
 import aiohttp
 import asyncio
 import requests
 from . import database as db
 import sqlite3
-import config
 
 end_working = False
 
 def get_air_temp_hum(id):
-    response = requests.get(f"{config.url_get_temp_hum}/{id}")
+    response = requests.get(f"{greenhouse_api.url_get_temp_hum}/{id}")
     if response.status_code == 200:
         data = response.json()
         if type(data) == dict:
@@ -22,7 +21,7 @@ def get_air_temp_hum(id):
 # Влажность почвы
 async def aget_ground_hum(session : aiohttp.ClientSession, id):
     try:
-        async with session.get(f"{config.url_get_hum}/{id}") as resp:
+        async with session.get(f"{greenhouse_api.url_get_hum}/{id}") as resp:
             jsoned = {}
             if resp.status == 200:
                 jsoned = await resp.json(content_type=None)
@@ -35,7 +34,7 @@ async def aget_ground_hum(session : aiohttp.ClientSession, id):
 # Влажность и температура воздуха
 async def aget_air_temp_hum(session : aiohttp.ClientSession, id):
     try:
-        async with session.get(f"{config.url_get_temp_hum}/{id}") as resp:
+        async with session.get(f"{greenhouse_api.url_get_temp_hum}/{id}") as resp:
             jsoned = {}
             if resp.status == 200:
                 jsoned = await resp.json(content_type=None)

@@ -1,4 +1,5 @@
 import requests
+from . import greenhouse_api
 from predprof_teplici import database as db
 
 from flask import (
@@ -136,7 +137,7 @@ def fork_drive():
             "state": state
         }
 
-        resp = requests.patch(current_app.config["urls"]["url_patch_fork_drive"], params=parameters)
+        resp = requests.patch(greenhouse_api.url_patch_fork_drive, params=parameters)
         if resp.status_code == 200:
             current_app.config["settings"]["fork_drive"] = state
         else:
@@ -160,7 +161,7 @@ def total_hum():
             "state": state
         }
 
-        resp = requests.patch(current_app.config["urls"]["url_patch_total_hum"], params=parameters)
+        resp = requests.patch(greenhouse_api.url_patch_total_hum, params=parameters)
         if resp.status_code == 200:
             current_app.config["settings"]["total_hum"] = state
         else:
@@ -189,7 +190,7 @@ def watering():
             "state": state
         }
 
-        resp = requests.patch(current_app.config["urls"]["url_patch_watering"], params=parameters)
+        resp = requests.patch(greenhouse_api.url_patch_watering, params=parameters)
         if resp.status_code == 200:
             current_app.config["settings"]["watering"][id - 1] = state
         else:
