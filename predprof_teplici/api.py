@@ -203,6 +203,40 @@ def watering():
 
     return SuccessResponse(resp_data)
 
+# http://127.0.0.1:80/api/watering
+@app.route('/api/watering', methods=['PATCH'])
+def watering():
+    data = request.get_json()
+
+    check_parameters(data, (("id", int), ("state", int)))
+
+    id =  data.get("id", None)
+    if not id in range(1, 7):
+        return ErrorResponse("field \"id\" incorrect", 400)
+
+    state =  data.get("state", None)
+    if not state in range(0, 2):
+        return ErrorResponse("field \"state\" incorrect", 400)
+
+    if state != settings["watering"][id - 1]:
+        parameters = {
+            "id": id,
+            "state": state
+        }
+
+        resp = requests.patch(config.url_patch_watering, params=parameters)
+        if resp.status_code == 200:
+            settings["watering"][id - 1] = state
+        else:
+            return ErrorResponse("Unable to do patch request to greenhouse", 500)
+
+    resp_data = {
+        "id": id,
+        "state": state
+    }
+
+    return SuccessResponse(resp_data)
+
 # http://127.0.0.1:80/api/emergency
 @bp.route('/emergency', methods=['PATCH'])
 def emergency():
