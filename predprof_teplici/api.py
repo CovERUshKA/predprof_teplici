@@ -38,8 +38,9 @@ def check_parameters(data, parameters):
         assert type(data) == dict, ('data', 404)
 
         for param in parameters:
-            if (param[0] in data) == True:
-                assert type(data.get(param[0])) == param[1], (param[0], 400)
+            types = param[1:]
+            if param[0] in data:
+                assert type(data.get(param[0])) in types, (param[0], 400)
             else:
                 raise AssertionError((param[0], 404))
     except AssertionError as e:
@@ -102,7 +103,7 @@ def cur_state():
 def parameters():
     data : dict = request.get_json()
 
-    check_parameters(data, (("T", float),("H", float),("Hb", float)))
+    check_parameters(data, (("T", float, int),("H", float, int),("Hb", float, int)))
 
     T =  data.get("T", None)
     H =  data.get("H", None)
@@ -221,14 +222,14 @@ def emergency():
 def add_temp_hum():
     data = request.get_json()
 
-    check_parameters(data, (("id", int), ("temperature", float), ("humidity", float)))
+    check_parameters(data, (("id", int), ("temperature", float, int), ("humidity", float, int)))
 
     id =  data.get("id", None)
     if not id in range(1, 5):
         return ErrorResponse("field \"id\" incorrect", 400)
 
-    temperature =  data.get("temperature", None)
-    humidity =  data.get("humidity", None)
+    temperature = data.get("temperature", None)
+    humidity = data.get("humidity", None)
 
     db.add_air_temp_hum(id, temperature, humidity)
 
@@ -245,13 +246,13 @@ def add_temp_hum():
 def add_hum():
     data = request.get_json()
 
-    check_parameters(data, (("id", int), ("humidity", float)))
+    check_parameters(data, (("id", int), ("humidity", float, int)))
 
-    id =  data.get("id", None)
+    id = data.get("id", None)
     if not id in range(1, 7):
         return ErrorResponse("field \"id\" incorrect", 400)
 
-    humidity =  data.get("humidity", None)
+    humidity = data.get("humidity", None)
 
     db.add_ground_hum(id, humidity)
 
