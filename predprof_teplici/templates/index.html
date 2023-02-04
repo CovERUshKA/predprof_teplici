@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -498,25 +497,37 @@
         }
         */
         function update_dataset(){
+            let default_dot_color = 'rgba(0, 0, 0, 0)';
+            let color_air_temperature = 'rgb(235, 62, 54)';
+            let color_air_humidity = 'rgb(54, 102, 235)';
+            let color_ground_humidity = 'rgb(54, 102, 235)';
             dataset.AirMean.data = {
                 labels: timeLabels(data.air[4][2]),
                 datasets: [
                 {
                     //lineTension: 0,
                     label: 'Ср. температура воздуха °C',
-                    backgroundColor: 'rgb(255, 80, 80)',
-                    borderColor: 'rgb(255, 80, 80)',
+                    backgroundColor: color_air_temperature,
+                    borderColor: color_air_temperature,
                     data: data.air[4][0],
-                    fill: false
+                    fill: false,
+                    pointBorderColor: default_dot_color,
+                    pointBackgroundColor: default_dot_color,
+                    pointHoverBackgroundColor: color_air_temperature,
+                    pointHoverBorderColor: color_air_temperature,
                 },
                 {
                     //lineTension: 0,
                     label: 'Ср. влажность воздуха %',
-                    backgroundColor: 'rgb(120, 120, 255)',
-                    borderColor: 'rgb(120, 120, 255)',
+                    backgroundColor: color_air_humidity,
+                    borderColor: color_air_humidity,
                     data: data.air[4][1],
-                    fill: false
-                }
+                    fill: false,
+                    pointBorderColor: default_dot_color,
+                    pointBackgroundColor: default_dot_color,
+                    pointHoverBackgroundColor: color_air_humidity,
+                    pointHoverBorderColor: color_air_humidity,
+                },
                 ]
             };
   
@@ -527,18 +538,26 @@
                     {
                         //lineTension: 0,
                         label: 'Температура воздуха °C ( Датчик ' + (i+1) + ' )',
-                        backgroundColor: 'rgb(255, 80, 80)',
-                        borderColor: 'rgb(255, 80, 80)',
+                        backgroundColor: color_air_temperature,
+                        borderColor: color_air_temperature,
                         data: data.air[i][0],
-                        fill: false
+                        fill: false,
+                        pointBorderColor: color_air_temperature,
+                        pointBackgroundColor: color_air_temperature,
+                        pointHoverBackgroundColor: color_air_temperature,
+                        pointHoverBorderColor: color_air_temperature,
                     },
                     {
                         //lineTension: 0,
                         label: 'Влажность воздуха % ( Датчик ' + (i+1) + ' )',
-                        backgroundColor: 'rgb(120, 120, 255)',
-                        borderColor: 'rgb(120, 120, 255)',
+                        backgroundColor: color_air_humidity,
+                        borderColor: color_air_humidity,
                         data: data.air[i][1],
-                        fill: false
+                        fill: false,
+                        pointBorderColor: default_dot_color,
+                        pointBackgroundColor: default_dot_color,
+                        pointHoverBackgroundColor: color_air_humidity,
+                        pointHoverBorderColor: color_air_humidity,
                     }
                     ]
                 }
@@ -551,10 +570,14 @@
                     {
                         //lineTension: 0,
                         label: 'Влажность почвы % ( Датчик ' + (i+1) + ' )',
-                        backgroundColor: 'rgb(120, 170, 255)',
-                        borderColor: 'rgb(120, 170, 255)',
+                        backgroundColor: color_ground_humidity,
+                        borderColor: color_ground_humidity,
                         data: data.ground[i][0],
-                        fill: false
+                        fill: false,
+                        pointBorderColor: default_dot_color,
+                        pointBackgroundColor: default_dot_color,
+                        pointHoverBackgroundColor: color_ground_humidity,
+                        pointHoverBorderColor: color_ground_humidity,
                     }
                     ]
                 }
@@ -654,33 +677,21 @@
                 api_update_states_and_params();
             }
         );
+
         var chart = new Chart(ctx, {
             type: 'line',
             data: dataset.AirMean.data,
             
             options:{
-                animation: false,
-                parsing: false,
+                //animation: false,
                 
-                
-                interaction: {
-                    mode: 'nearest',
-                    axis: 'x',
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                hover: {
+                    mode: 'index',
                     intersect: false
-                },
-                plugins: {
-                    decimation: decimation,
-                },
-                scales: {
-                x: {
-                    type: 'time',
-                    ticks: {
-                    source: 'auto',
-                    // Disabled rotation for performance
-                    maxRotation: 0,
-                    autoSkip: true,
-                    }
-                }
                 },
                 scales: {
                     xAxes: [{         
@@ -700,7 +711,6 @@
                             });
                         } 
                     }],
-                    
                     yAxes: [{
                         display: true,
                         ticks: {
@@ -708,11 +718,7 @@
                             suggestedMax: 80,
                         }
                     }]
-
                 }
-                
-
-
             }
         }); 
         /*
