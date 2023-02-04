@@ -135,6 +135,35 @@ def test_watering(client : FlaskClient, app):
     response = client.patch("/api/watering", json=json)
     assert response.status_code == 400
 
+def test_emergency(client : FlaskClient, app):
+    json = {
+        "state": 1
+    }
+    response = client.patch("/api/emergency", json=json)
+    assert response.status_code == 200
+
+    json = {
+        "state": 0
+    }
+    response = client.patch("/api/emergency", json=json)
+    assert response.status_code == 200
+
+    json = {
+        "state": "1"
+    }
+    response = client.patch("/api/emergency", json=json)
+    assert response.status_code == 400
+
+    json = {
+        "state_invalid": "1"
+    }
+    response = client.patch("/api/emergency", json=json)
+    assert response.status_code == 404
+
+    json = {}
+    response = client.patch("/api/emergency", json=json)
+    assert response.status_code == 404
+
 def test_add_hum(client : FlaskClient, app):
     json = {
         "id": 1,
