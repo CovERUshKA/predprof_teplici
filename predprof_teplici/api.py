@@ -105,9 +105,9 @@ def parameters():
 
     check_parameters(data, (("T", float, int),("H", float, int),("Hb", float, int)))
 
-    T =  data.get("T", None)
-    H =  data.get("H", None)
-    Hb =  data.get("Hb", None)
+    T = data.get("T", None)
+    H = data.get("H", None)
+    Hb = data.get("Hb", None)
     
     if H < 0 or H > 100:
         return ErrorResponse("field \"H\" incorrect", 400)
@@ -128,7 +128,7 @@ def fork_drive():
 
     check_parameters(data, (("state", int),))
 
-    state =  data.get("state", None)
+    state = data.get("state", None)
     
     if not state in range(0, 2):
         return ErrorResponse("field \"state\" incorrect", 400)
@@ -153,7 +153,7 @@ def total_hum():
 
     check_parameters(data, (("state", int),))
 
-    state =  data.get("state", None)
+    state = data.get("state", None)
     if not state in range(0, 2):
         return ErrorResponse("field \"state\" incorrect", 400)
 
@@ -177,11 +177,11 @@ def watering():
 
     check_parameters(data, (("id", int), ("state", int)))
 
-    id =  data.get("id", None)
+    id = data.get("id", None)
     if not id in range(1, 7):
         return ErrorResponse("field \"id\" incorrect", 400)
 
-    state =  data.get("state", None)
+    state = data.get("state", None)
     if not state in range(0, 2):
         return ErrorResponse("field \"state\" incorrect", 400)
 
@@ -224,7 +224,7 @@ def add_temp_hum():
 
     check_parameters(data, (("id", int), ("temperature", float, int), ("humidity", float, int)))
 
-    id =  data.get("id", None)
+    id = data.get("id", None)
     if not id in range(1, 5):
         return ErrorResponse("field \"id\" incorrect", 400)
 
