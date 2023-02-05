@@ -14,10 +14,10 @@ def create_app():
             "H": None,
             "Hb": None
         },
-        "fork_drive": None,
-        "total_hum": None,
+        "fork_drive": 0,
+        "total_hum": 0,
         "emergency": 0,
-        "watering": [None, None, None, None, None, None]
+        "watering": [0, 0, 0, 0, 0, 0]
     }
 
     # http://127.0.0.1:80
