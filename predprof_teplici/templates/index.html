@@ -377,21 +377,76 @@
     <div class="form big">
         <form name="set_new_data">
             <div class="title">Ввод новых данных</div>
+            <div class="subtitle">Сенсоры воздуха</div>
             <div class="input-line">
                 <div class="input-container small ic2">
                     <input id="min_hum" class="input" type="number" step="0.1" placeholder=" " />
-                    <label for="min_hum" class="placeholder">температура воздуха №1</label>
+                    <label for="min_hum" class="placeholder">температура воздуха</label>
                 </div>
                 
                 <div class="input-container small ic2">
                     <input id="min_hum" class="input" type="number" step="0.1" placeholder=" " />
-                    <label for="min_hum" class="placeholder">влажность воздуха №1</label>
+                    <label for="min_hum" class="placeholder">влажность воздуха</label>
+                </div>
+            </div>
+            <div class="input-line">
+                <div class="input-container small ic2">
+                    <input id="min_hum" class="input" type="number" step="0.1" placeholder=" " />
+                    <label for="min_hum" class="placeholder">температура воздуха</label>
+                </div>
+                
+                <div class="input-container small ic2">
+                    <input id="min_hum" class="input" type="number" step="0.1" placeholder=" " />
+                    <label for="min_hum" class="placeholder">влажность воздуха</label>
+                </div>
+            </div>
+            <div class="input-line">
+                <div class="input-container small ic2">
+                    <input id="min_hum" class="input" type="number" step="0.1" placeholder=" " />
+                    <label for="min_hum" class="placeholder">температура воздуха</label>
+                </div>
+                
+                <div class="input-container small ic2">
+                    <input id="min_hum" class="input" type="number" step="0.1" placeholder=" " />
+                    <label for="min_hum" class="placeholder">влажность воздуха</label>
+                </div>
+            </div>
+            <div class="input-line">
+                <div class="input-container small ic2">
+                    <input id="min_hum" class="input" type="number" step="0.1" placeholder=" " />
+                    <label for="min_hum" class="placeholder">температура воздуха</label>
+                </div>
+                
+                <div class="input-container small ic2">
+                    <input id="min_hum" class="input" type="number" step="0.1" placeholder=" " />
+                    <label for="min_hum" class="placeholder">влажность воздуха</label>
                 </div>
             </div>
            
+            <div class="subtitle">Сенсоры почвы</div>
             <div class="input-container ic2">
-                <input id="min_hum" class="input" type="number" step="0.1" placeholder=" " />
+                <input id="add_groud_hum_sensor_1" class="input" type="number" step="0.1" placeholder=" " />
                 <label for="min_hum" class="placeholder">влажность почвы №1</label>
+            </div>
+            <div class="input-container ic2">
+                <input id="add_groud_hum_sensor_2" class="input" type="number" step="0.1" placeholder=" " />
+                <label for="min_hum" class="placeholder">влажность почвы №2</label>
+            </div>
+            <div class="input-container ic2">
+                <input id="add_groud_hum_sensor_3" class="input" type="number" step="0.1" placeholder=" " />
+                <label for="min_hum" class="placeholder">влажность почвы №3</label>
+            </div>
+            <div class="input-container ic2">
+                <input id="add_groud_hum_sensor_4" class="input" type="number" step="0.1" placeholder=" " />
+                <label for="min_hum" class="placeholder">влажность почвы №4</label>
+            </div>
+            <div class="input-container ic2">
+                <input id="add_groud_hum_sensor_5" class="input" type="number" step="0.1" placeholder=" " />
+                <label for="min_hum" class="placeholder">влажность почвы №5</label>
+            </div>
+            <div class="input-container ic2">
+                <input id="add_groud_hum_sensor_6" class="input" type="number" step="0.1" placeholder=" " />
+                <label for="min_hum" class="placeholder">влажность почвы №6c</label>
             </div>
             
         </form>
@@ -403,12 +458,17 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script>
-        const url = "http://127.0.0.1:80/api/sensors_data?time_period=30";
+        const url = "http://127.0.0.1:80/api/sensors_data?time_period=100";
         const url_states = "http://127.0.0.1:80/api/state";
+        const url_system = `http://127.0.0.1:80/api/parameters`;
+        const url_set_sensors_data = "http://127.0.0.1:80/api/add_data";
+
         let ctx = document.getElementById('GRAAAPH').getContext("2d");
         let table = document.getElementById('table');
+
         let parameters_form = document.forms.set_parameters_form;
         let new_data_form = document.forms.set_new_data;
+
         let current_graph = {
             name: 'AirMean',
             id: 0
@@ -417,7 +477,8 @@
         function toDateTime(secs) {
             var t = new Date(0);
             t.setMilliseconds(secs);
-            return ' ' + t.getFullYear() + ' ' + (t.getMonth()+1) + ' ' + t.getDate() + ' ' + (t.getHours()) + ':' + t.getMinutes() + ':' + t.getSeconds();
+            // ("0" + x).slice(-2) == 1 -> 01 == 12 -> 12
+            return ' ' + t.getFullYear() + ' ' + (t.getMonth()+1) + ' ' + t.getDate() + ' ' + ("0" + t.getHours()).slice(-2) + ':' + ("0" + t.getMinutes()).slice(-2) + ':' + ("0" + t.getSeconds()).slice(-2);
         }
 
         function timeLabels(arr_of_times){
@@ -643,7 +704,6 @@
                 data = json.result;
                 draw_graph(current_graph.name, current_graph.id);
                 update_last_data_from_sensors_elements();
-                api_update_states_and_params();
             }
         }
         function initiate_states_elements(){
@@ -702,8 +762,8 @@
            states_elements["T_element"].set_value(states["parameters"]["T"]);
            states_elements["H_element"].set_value(states["parameters"]["H"]);
            states_elements["Hb_element"].set_value(states["parameters"]["Hb"]);
-
-           
+        }
+        function update_params_in_form(){
            parameters_form.max_temp.value = states["parameters"]["T"];
            parameters_form.min_hum.value = states["parameters"]["H"];
            parameters_form.min_ground_hum.value = states["parameters"]["Hb"];
@@ -713,10 +773,10 @@
 
             if (response.ok){
                 let json = await response.json();
-                console.log(json);
                 states = json.result;
                 update_params();
                 update_states();
+                update_params_in_form();
             }
         }
         initiate_dataset();
@@ -729,8 +789,9 @@
                 api_update_states_and_params();
             }
         );
-*/
+        */
         get_data_from_api();
+        api_update_states_and_params();
         var chart = new Chart(ctx, {
             type: 'line',
             data: dataset.AirMean.data,
@@ -795,7 +856,6 @@
         </tr>
         */
         function update_table(){
-            console.log(data);
             if (current_graph.name != "GroundSensors"){
                 table.innerHTML = `
                     <tr>
@@ -899,6 +959,9 @@
             update_table();
             chart.update();
         }
+        function value_to_Number(x){
+            return Number(Number(x).toFixed(1))
+        }
         async function switch_system(system = '', watering_id=0){
             let url_system = `http://127.0.0.1:80/api/${system}`;
             let patch_body = {};
@@ -942,21 +1005,6 @@
                     sensors_elements["mean_temp_air_sensor"].value > states_elements["H_element"].value && states_elements["Hb_element"].value != undefined  && states_elements["Hb_element"].value != null){
                         new Toast({
                             title: false,
-                            text: 'Средняя температура воздуха меньше установленного максимума для открытия форточек',
-                            theme: 'danger',
-                            autohide: true,
-                            interval: toast_time
-                        });
-                        accept_switch_system = false;
-                    }
-                }
-                console.log(accept_switch_system);  
-                if (!states_elements["emergency"].state && system == "total_hum"){
-
-                    if ((states_elements[system].state == 0 || states_elements[system].state == 2) &&
-                    sensors_elements["mean_hum_air_sensor"].value > states_elements["H_element"].value && states_elements["H_element"].value){
-                        new Toast({
-                            title: false,
                             text: 'Средняя влажность воздуха больше установленного минимума для общего увлажнения',
                             theme: 'danger',
                             autohide: true,
@@ -986,14 +1034,12 @@
             setTimeout(api_update_states_and_params, 100);
         }
         async function submit_parameters_form(system = '', watering_id=0){
-            let url_system = `http://127.0.0.1:80/api/parameters`;
-            
             let patch_body = {};
             
             patch_body = {
-                T:  Number(Number(parameters_form.max_temp.value).toFixed(1)),
-                H:  Number(Number(parameters_form.min_hum.value).toFixed(1)),
-                Hb: Number(Number(parameters_form.min_ground_hum.value).toFixed(1))
+                T:  value_to_Number(parameters_form.max_temp.value),
+                H:  value_to_Number(parameters_form.min_hum.value),
+                Hb: value_to_Number(parameters_form.min_ground_hum.value)
             };
 
             fetch(url_system, {
@@ -1008,18 +1054,31 @@
                 .then((response) => response.json());
             setTimeout(api_update_states_and_params, 100);
         }
-        async function submit_new_data_form(system = '', watering_id=0){
-            let url_system = `http://127.0.0.1:80/api/parameters`;
-            
+        async function submit_new_data_form(){
             let patch_body = {};
-            
+            // value_to_Number(new_data_form.max_temp.value)
+            // new_data_form
+            let new_air_data = [
+                [,],
+                [,],
+                [,],
+                [,]
+            ];
+            let new_ground_data = [
+                ,
+                ,
+                ,
+                ,
+                ,
+
+            ];
+
             patch_body = {
-                T:  Number(Number(new_data_form.max_temp.value).toFixed(1)),
-                H:  Number(Number(parameters_form.min_hum.value).toFixed(1)),
-                Hb: Number(Number(parameters_form.min_ground_hum.value).toFixed(1))
+                air:  new_air_data,
+                ground:  new_ground_data
             };
 
-            fetch(url_system, {
+            fetch(url_set_sensors_data, {
                 method: 'PATCH',
                 body: JSON.stringify(
                     patch_body
@@ -1029,6 +1088,7 @@
                 },
                 })
                 .then((response) => response.json());
+            setTimeout(get_data_from_api, 100);
             setTimeout(api_update_states_and_params, 100);
         }
         
