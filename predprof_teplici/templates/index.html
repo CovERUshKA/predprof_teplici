@@ -416,7 +416,7 @@
         
         function toDateTime(secs) {
             var t = new Date(0);
-            t.setMilliseconds(secs)
+            t.setMilliseconds(secs);
             return ' ' + t.getFullYear() + ' ' + (t.getMonth()+1) + ' ' + t.getDate() + ' ' + (t.getHours()) + ':' + t.getMinutes() + ':' + t.getSeconds();
         }
 
