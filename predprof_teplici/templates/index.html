@@ -6,7 +6,7 @@
     <!--
         notify
     -->
-  <link rel="stylesheet" type="text/css" href="static/styles/toast.css" />
+    <link rel="stylesheet" type="text/css" href="static/styles/toast.css" />
     <script src="static/js/toast.js"></script>
 
   </head>
@@ -46,8 +46,9 @@
         margin-top: 10px;
     }
     .sensor:hover{
-        background-color: rgb(196, 253, 255);
+        background-color: rgb(36, 189, 255);
         cursor: pointer;
+        box-shadow: 0 0 14px -3px rgb(141, 123, 218);
     }
     .sensor:active{
         background-color: rgb(166, 187, 243);
@@ -112,6 +113,13 @@
   font-weight: 600;
   margin-top: 30px;
 }
+.subtitle {
+  color: #eee;
+  font-family: sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  margin-top: 30px;
+}
 
 
 .input-container {
@@ -120,6 +128,23 @@
   width: 100%;
 }
 
+.form.big {
+    width: 1000px;
+    height: auto;
+}
+.input-line{
+    display: flex;
+    flex-basis: auto;
+    width: 100%;
+    height: 50px;
+}
+.input-container.small {
+  width: 47%;
+}
+.input-line > .input-container.small {
+  flex: auto;
+  flex-basis: auto;
+}
 .ic1 {
   margin-top: 40px;
 }
@@ -332,23 +357,45 @@
     <div class="form">
         <form name="set_parameters_form">
             <div class="title">Настройки</div>
+
             <div class="input-container ic1">
-            <input id="max_temp" class="input" type="number" step="0.1" placeholder=" " />
-            <div class="cut"></div>
-            <label for="max_temp" class="placeholder">Макс. ср. температура воздуха</label>
+                <input id="max_temp" class="input" type="number" step="0.1" placeholder=" " />
+                <label for="max_temp" class="placeholder">Макс. ср. температура воздуха</label>
             </div>
             <div class="input-container ic2">
-            <input id="min_hum" class="input" type="number" step="0.1" placeholder=" " />
-            <div class="cut"></div>
-            <label for="min_hum" class="placeholder">Мин. ср. влажность воздуха</label>
+                <input id="min_hum" class="input" type="number" step="0.1" placeholder=" " />
+                <label for="min_hum" class="placeholder">Мин. ср. влажность воздуха</label>
             </div>
             <div class="input-container ic2">
-            <input id="min_ground_hum" class="input" type="number" step="0.1" placeholder=" " />
-            <div class="cut cut-short"></div>
-            <label for="min_ground_hum" class="placeholder">Мин. влажность почвы</label>
+                <input id="min_ground_hum" class="input" type="number" step="0.1" placeholder=" " />
+                <label for="min_ground_hum" class="placeholder">Мин. влажность почвы</label>
             </div>
         </form>
-        <button onclick="submit_form()">Сохранить</button>
+        <button class="submit" onclick="submit_parameters_form()">Сохранить</button>
+    </div>
+    
+    <div class="form big">
+        <form name="set_new_data">
+            <div class="title">Ввод новых данных</div>
+            <div class="input-line">
+                <div class="input-container small ic2">
+                    <input id="min_hum" class="input" type="number" step="0.1" placeholder=" " />
+                    <label for="min_hum" class="placeholder">температура воздуха №1</label>
+                </div>
+                
+                <div class="input-container small ic2">
+                    <input id="min_hum" class="input" type="number" step="0.1" placeholder=" " />
+                    <label for="min_hum" class="placeholder">влажность воздуха №1</label>
+                </div>
+            </div>
+           
+            <div class="input-container ic2">
+                <input id="min_hum" class="input" type="number" step="0.1" placeholder=" " />
+                <label for="min_hum" class="placeholder">влажность почвы №1</label>
+            </div>
+            
+        </form>
+        <button class="submit" onclick="submit_new_data_form()">Сохранить</button>
     </div>
 
 
@@ -356,11 +403,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script>
-        let url = "http://127.0.0.1:80/api/sensors_data?time_period=30";
-        let url_states = "http://127.0.0.1:80/api/state";
+        const url = "http://127.0.0.1:80/api/sensors_data?time_period=30";
+        const url_states = "http://127.0.0.1:80/api/state";
         let ctx = document.getElementById('GRAAAPH').getContext("2d");
         let table = document.getElementById('table');
-        let form = document.forms.set_parameters_form;
+        let parameters_form = document.forms.set_parameters_form;
+        let new_data_form = document.forms.set_new_data;
+        let current_graph = {
+            name: 'AirMean',
+            id: 0
+        };
         
         function toDateTime(secs) {
             var t = new Date(0);
@@ -368,7 +420,8 @@
             return ' ' + t.getFullYear() + ' ' + (t.getMonth()+1) + ' ' + t.getDate() + ' ' + (t.getHours()) + ':' + t.getMinutes() + ':' + t.getSeconds();
         }
 
-        function timeLabels(times){
+        function timeLabels(arr_of_times){
+            let times = arr_of_times.slice()
             for(let i = 0; i < times.length; i++){
                 times[i] = toDateTime(times[i]);
             }
@@ -496,20 +549,19 @@
             ]
         }
         */
-        function update_dataset(){
+        function initiate_dataset(){
             let default_dot_color = 'rgba(0, 0, 0, 0)';
             let color_air_temperature = 'rgb(235, 62, 54)';
             let color_air_humidity = 'rgb(54, 102, 235)';
             let color_ground_humidity = 'rgb(54, 102, 235)';
             dataset.AirMean.data = {
-                labels: timeLabels(data.air[4][2]),
+                labels: [],
                 datasets: [
                 {
-                    //lineTension: 0,
                     label: 'Ср. температура воздуха °C',
                     backgroundColor: color_air_temperature,
                     borderColor: color_air_temperature,
-                    data: data.air[4][0],
+                    data: [],
                     fill: false,
                     pointBorderColor: default_dot_color,
                     pointBackgroundColor: default_dot_color,
@@ -517,11 +569,10 @@
                     pointHoverBorderColor: color_air_temperature,
                 },
                 {
-                    //lineTension: 0,
                     label: 'Ср. влажность воздуха %',
                     backgroundColor: color_air_humidity,
                     borderColor: color_air_humidity,
-                    data: data.air[4][1],
+                    data: [],
                     fill: false,
                     pointBorderColor: default_dot_color,
                     pointBackgroundColor: default_dot_color,
@@ -533,14 +584,14 @@
   
             for(let i = 0; i < 4; i++){
                 dataset.AirSensors[i].data = {
-                    labels: timeLabels(data.air[i][2]),
+                    labels: [],
                     datasets: [
                     {
                         //lineTension: 0,
                         label: 'Температура воздуха °C ( Датчик ' + (i+1) + ' )',
                         backgroundColor: color_air_temperature,
                         borderColor: color_air_temperature,
-                        data: data.air[i][0],
+                        data: [],
                         fill: false,
                         pointBorderColor: color_air_temperature,
                         pointBackgroundColor: color_air_temperature,
@@ -552,7 +603,7 @@
                         label: 'Влажность воздуха % ( Датчик ' + (i+1) + ' )',
                         backgroundColor: color_air_humidity,
                         borderColor: color_air_humidity,
-                        data: data.air[i][1],
+                        data: [],
                         fill: false,
                         pointBorderColor: default_dot_color,
                         pointBackgroundColor: default_dot_color,
@@ -565,14 +616,13 @@
             
             for(let i = 0; i < 6; i++){
                 dataset.GroundSensors[i].data = {
-                    labels: timeLabels(data.ground[i][1]),
+                    labels: [],
                     datasets: [
                     {
-                        //lineTension: 0,
                         label: 'Влажность почвы % ( Датчик ' + (i+1) + ' )',
                         backgroundColor: color_ground_humidity,
                         borderColor: color_ground_humidity,
-                        data: data.ground[i][0],
+                        data: [],
                         fill: false,
                         pointBorderColor: default_dot_color,
                         pointBackgroundColor: default_dot_color,
@@ -582,7 +632,7 @@
                     ]
                 }
             }
-            draw_graph("AirMean");
+            
         }
         async function get_data_from_api(){
             let response = await fetch(url);
@@ -591,8 +641,9 @@
                 let json = await response.json();
                 console.log(json);
                 data = json.result;
-                update_dataset();
+                draw_graph(current_graph.name, current_graph.id);
                 update_last_data_from_sensors_elements();
+                api_update_states_and_params();
             }
         }
         function initiate_states_elements(){
@@ -634,15 +685,15 @@
            states_elements["fork_drive"].set_state(states["fork_drive"]);
            states_elements["total_hum"].set_state(states["total_hum"]);
            states_elements["emergency"].set_state(states["emergency"]);
-            if (states["fork_drive"] == 0 && sensors_elements["mean_temp_air_sensor"].value < states_elements["T_element"].value){
+            if (states["fork_drive"] == 0 && sensors_elements["mean_temp_air_sensor"].value < states_elements["T_element"].value && states_elements["T_element"].value != null){
                 states_elements["fork_drive"].set_state(2);
             }
-            if (states["total_hum"] == 0 && sensors_elements["mean_hum_air_sensor"].value > states_elements["Hb_element"].value){
+            if (states["total_hum"] == 0 && sensors_elements["mean_hum_air_sensor"].value > states_elements["H_element"].value && states_elements["H_element"].value != null){
                 states_elements["total_hum"].set_state(2);
             }
            for(let i = 0; i < 6; i++){
             states_elements["watering"][i].set_state(states["watering"][i]);
-            if (states["watering"][i] == 0 && sensors_elements["groud_hum_sensor"][i].value > states_elements["Hb_element"].value){
+            if (states["watering"][i] == 0 && sensors_elements["groud_hum_sensor"][i].value > states_elements["Hb_element"].value && states_elements["Hb_element"].value != null){
                 states_elements["watering"][i].set_state(2);
             }
            }
@@ -653,9 +704,9 @@
            states_elements["Hb_element"].set_value(states["parameters"]["Hb"]);
 
            
-           form.max_temp.value = states["parameters"]["T"];
-           form.min_hum.value = states["parameters"]["H"];
-           form.min_ground_hum.value = states["parameters"]["Hb"];
+           parameters_form.max_temp.value = states["parameters"]["T"];
+           parameters_form.min_hum.value = states["parameters"]["H"];
+           parameters_form.min_ground_hum.value = states["parameters"]["Hb"];
         }
         async function api_update_states_and_params(){
             let response = await fetch(url_states);
@@ -668,23 +719,26 @@
                 update_states();
             }
         }
+        initiate_dataset();
         initiate_states_elements();
         initiate_params_elements();
         initiate_sensors_elements();
-
+        /*
         get_data_from_api().then(
             function (result) {
                 api_update_states_and_params();
             }
         );
-
+*/
+        get_data_from_api();
         var chart = new Chart(ctx, {
             type: 'line',
             data: dataset.AirMean.data,
             
             options:{
-                //animation: false,
-                
+                animation: {
+                    duration: 0
+                },
                 tooltips: {
                     mode: 'index',
                     intersect: false,
@@ -705,7 +759,7 @@
                             let xLabels = data.ticks;
 
                             xLabels.forEach(function (labels, i) {
-                                if (i % 3 != 0){
+                                if (i % 5 != 0){
                                     xLabels[i] = '';
                                 }
                             });
@@ -716,8 +770,17 @@
                         ticks: {
                             suggestedMin: 20,
                             suggestedMax: 80,
-                        }
+                        },
+                        
+                        afterTickToLabelConversion: function(data){
+                            let xLabels = data.ticks;
+
+                            xLabels.forEach(function (labels, i) {
+                                xLabels[i] = xLabels[i] + ' °C';
+                            });
+                        } 
                     }]
+                    
                 }
             }
         }); 
@@ -731,8 +794,9 @@
             <td>35</td>
         </tr>
         */
-        function update_table(is_it_air_data){
-            if (is_it_air_data){
+        function update_table(){
+            console.log(data);
+            if (current_graph.name != "GroundSensors"){
                 table.innerHTML = `
                     <tr>
                         <th scope="col">Время</th>
@@ -748,23 +812,25 @@
                         <th scope="col">Средняя влажность</th>
                     </tr>
                 `;
-                for(let i = 0; i < dataset.AirMean.data.datasets[0].data.length; i++){
-                    table.innerHTML += `
+                for(let i = 0; i < data.air[4][2].length; i++){
+                    table.innerHTML += 
+                    `
                     <tr>
-                        <th scope="row">${dataset.AirMean.data.labels[i]}</th>
-                        <td>${dataset.AirSensors[0].data.datasets[0].data[i]}</td>
-                        <td>${dataset.AirSensors[1].data.datasets[0].data[i]}</td>
-                        <td>${dataset.AirSensors[2].data.datasets[0].data[i]}</td>
-                        <td>${dataset.AirSensors[3].data.datasets[0].data[i]}</td>
-                        <td>${dataset.AirMean.data.datasets[0].data[i]}</td>
+                        <th scope="row">${toDateTime(data.air[4][2][i])}</th>
+                        <td>${data.air[0][0][i]}</td>
+                        <td>${data.air[1][0][i]}</td>
+                        <td>${data.air[2][0][i]}</td>
+                        <td>${data.air[3][0][i]}</td>
+                        <td>${data.air[4][0][i]}</td>
 
-                        <td>${dataset.AirSensors[0].data.datasets[1].data[i]}</td>
-                        <td>${dataset.AirSensors[1].data.datasets[1].data[i]}</td>
-                        <td>${dataset.AirSensors[2].data.datasets[1].data[i]}</td>
-                        <td>${dataset.AirSensors[3].data.datasets[1].data[i]}</td>
-                        <td>${dataset.AirMean.data.datasets[0].data[i]}</td>
+                        <td>${data.air[0][1][i]}</td>
+                        <td>${data.air[1][1][i]}</td>
+                        <td>${data.air[2][1][i]}</td>
+                        <td>${data.air[3][1][i]}</td>
+                        <td>${data.air[4][1][i]}</td>
                     </tr>
-                    `;
+                    `
+                    ;
                 }
             }else{
                 table.innerHTML = `
@@ -778,58 +844,72 @@
                         <th scope="col">6</th>
                     </tr>
                 `;
-                for(let i = 0; i < dataset.AirMean.data.datasets[0].data.length; i++){
+                for(let i = 0; i < data.air[4][2].length; i++){
                     table.innerHTML += `
                     <tr>
-                        <th scope="row">${dataset.AirMean.data.labels[i]}</th>
-                        <td>${dataset.GroundSensors[0].data.datasets[0].data[i]}</td>
-                        <td>${dataset.GroundSensors[1].data.datasets[0].data[i]}</td>
-                        <td>${dataset.GroundSensors[2].data.datasets[0].data[i]}</td>
-                        <td>${dataset.GroundSensors[3].data.datasets[0].data[i]}</td>
-                        <td>${dataset.GroundSensors[4].data.datasets[0].data[i]}</td>
-                        <td>${dataset.GroundSensors[5].data.datasets[0].data[i]}</td>
+                        <th scope="row">${toDateTime(data.air[4][2][i])}</th>
+                        <td>${data.ground[0][0][i]}</td>
+                        <td>${data.ground[1][0][i]}</td>
+                        <td>${data.ground[2][0][i]}</td>
+                        <td>${data.ground[3][0][i]}</td>
+                        <td>${data.ground[4][0][i]}</td>
+                        <td>${data.ground[5][0][i]}</td>
                     </tr>
                     `;
                 }
             }
         }
-        function draw_graph(type="", sensor_id=0){
-            let new_data;
-            let is_it_air_data = false;
-            if (type=="AirMean"){
-                new_data = dataset.AirMean.data;
-                is_it_air_data = true;
-            }
-            if (type=="AirSensors"){
-                if (sensor_id <= 4 && sensor_id >= 0){
-                    new_data = dataset.AirSensors[sensor_id].data;
+        
+        function draw_graph(name="", sensor_id=0){
+            if (name=="AirMean"){
+                if (current_graph.name != name){
+                    chart.data = dataset.AirMean.data;
                 }
-                is_it_air_data = true;
+
+                chart.data.datasets[0].data = data.air[4][0];
+                chart.data.datasets[1].data = data.air[4][1];
+                chart.data.labels = timeLabels(data.air[4][2]);
             }
-            if (type=="GroundSensors"){
-                if (sensor_id <= 6 && sensor_id >= 0)
-                new_data = dataset.GroundSensors[sensor_id].data;
+            if (name=="AirSensors"){
+
+                if (current_graph.name != name || sensor_id != current_graph.id){
+                    chart.data = dataset.AirSensors[sensor_id].data;
+                }
+
+                if (sensor_id <= 4 && sensor_id >= 0){
+                    chart.data.datasets[0].data = data.air[sensor_id][0];
+                    chart.data.datasets[1].data = data.air[sensor_id][1];
+                    chart.data.labels = timeLabels(data.air[sensor_id][2]);
+                }
             }
-            if (new_data !== undefined){
-                chart.data = new_data;
-                update_table(is_it_air_data);
-                chart.update();
+            if (name=="GroundSensors"){
+
+                if (current_graph.name != name || sensor_id != current_graph.id){
+                    chart.data = dataset.GroundSensors[sensor_id].data;
+                }
+
+                if (sensor_id <= 6 && sensor_id >= 0){
+                    chart.data.datasets[0].data = data.ground[sensor_id][0];
+                    chart.data.labels = timeLabels(data.ground[sensor_id][1]);
+                }
             }
+            current_graph.name = name;
+            current_graph.id = sensor_id;
+            
+            update_table();
+            chart.update();
         }
         async function switch_system(system = '', watering_id=0){
             let url_system = `http://127.0.0.1:80/api/${system}`;
             let patch_body = {};
             let accept_switch_system = true;
             let emergency = states_elements["emergency"].state
+            const toast_time = 4000;
             if (system=='watering') {
                 patch_body = {
                     state: Math.abs(states_elements[system][watering_id].state-1),
                     id: watering_id+1
                 };
-                console.log(sensors_elements["groud_hum_sensor"][watering_id].value);
-                console.log(states_elements["Hb_element"].value);
-                console.log(states_elements[system][watering_id].state);
-                console.log(emergency);
                 
                 if (!emergency && (states_elements[system][watering_id].state == 0 || states_elements[system][watering_id].state == 2) &&
                 sensors_elements["groud_hum_sensor"][watering_id].value > states_elements["Hb_element"].value  && states_elements["Hb_element"].value != undefined  && states_elements["Hb_element"].value != null){
@@ -837,7 +917,8 @@
                         title: false,
                         text: `Влажность земли (${watering_id+1})  больше установленного минимума для поливания`,
                         theme: 'danger',
-                        autohide: false
+                        autohide: true,
+                        interval: toast_time
                     });
                     accept_switch_system = false;
                 }
@@ -850,7 +931,8 @@
                             title: false,
                             text: 'Средняя температура воздуха меньше установленного максимума для открытия форточек',
                             theme: 'danger',
-                            autohide: false
+                            autohide: true,
+                            interval: toast_time
                         });
                         accept_switch_system = false;
                     }
@@ -862,7 +944,8 @@
                             title: false,
                             text: 'Средняя температура воздуха меньше установленного максимума для открытия форточек',
                             theme: 'danger',
-                            autohide: false
+                            autohide: true,
+                            interval: toast_time
                         });
                         accept_switch_system = false;
                     }
@@ -876,7 +959,8 @@
                             title: false,
                             text: 'Средняя влажность воздуха больше установленного минимума для общего увлажнения',
                             theme: 'danger',
-                            autohide: false
+                            autohide: true,
+                            interval: toast_time
                         });
                         accept_switch_system = false;
                     }
@@ -901,15 +985,38 @@
                 .then((response) => response.json());
             setTimeout(api_update_states_and_params, 100);
         }
-        async function submit_form(system = '', watering_id=0){
+        async function submit_parameters_form(system = '', watering_id=0){
             let url_system = `http://127.0.0.1:80/api/parameters`;
             
             let patch_body = {};
             
             patch_body = {
-                T:  Number(Number(form.max_temp.value).toFixed(1)),
-                H:  Number(Number(form.min_hum.value).toFixed(1)),
-                Hb: Number(Number(form.min_ground_hum.value).toFixed(1))
+                T:  Number(Number(parameters_form.max_temp.value).toFixed(1)),
+                H:  Number(Number(parameters_form.min_hum.value).toFixed(1)),
+                Hb: Number(Number(parameters_form.min_ground_hum.value).toFixed(1))
+            };
+
+            fetch(url_system, {
+                method: 'PATCH',
+                body: JSON.stringify(
+                    patch_body
+                ),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
+                })
+                .then((response) => response.json());
+            setTimeout(api_update_states_and_params, 100);
+        }
+        async function submit_new_data_form(system = '', watering_id=0){
+            let url_system = `http://127.0.0.1:80/api/parameters`;
+            
+            let patch_body = {};
+            
+            patch_body = {
+                T:  Number(Number(new_data_form.max_temp.value).toFixed(1)),
+                H:  Number(Number(parameters_form.min_hum.value).toFixed(1)),
+                Hb: Number(Number(parameters_form.min_ground_hum.value).toFixed(1))
             };
 
             fetch(url_system, {
@@ -926,7 +1033,7 @@
         }
         
 
-        //setInterval(get_data_from_api, 5000);
+        setInterval(get_data_from_api, 3000);
     </script>
   </body>
 </html>
