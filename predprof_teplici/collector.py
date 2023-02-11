@@ -1,10 +1,11 @@
-import time
 from . import greenhouse_api
 import aiohttp
 import asyncio
 import requests
 from . import database as db
 import sqlite3
+import time
+from .rest import get_current_time
 
 end_working = False
 
@@ -63,7 +64,7 @@ async def infinite_collect():
 
             all_ground_humidity = rets[0:6]
             all_air_temp_hum = rets[6:10]
-            time_collected = round(time.time())
+            time_collected = get_current_time()
 
             temps = []
             hums = []
