@@ -416,11 +416,12 @@
         
         function toDateTime(secs) {
             var t = new Date(0);
-            t.setSeconds(secs)
+            t.setMilliseconds(secs)
             return ' ' + t.getFullYear() + ' ' + (t.getMonth()+1) + ' ' + t.getDate() + ' ' + (t.getHours()) + ':' + t.getMinutes() + ':' + t.getSeconds();
         }
 
-        function timeLabels(times){
+        function timeLabels(arr_of_times){
+            let times = arr_of_times.slice()
             for(let i = 0; i < times.length; i++){
                 times[i] = toDateTime(times[i]);
             }
@@ -548,20 +549,19 @@
             ]
         }
         */
-        function update_dataset(){
+        function initiate_dataset(){
             let default_dot_color = 'rgba(0, 0, 0, 0)';
             let color_air_temperature = 'rgb(235, 62, 54)';
             let color_air_humidity = 'rgb(54, 102, 235)';
             let color_ground_humidity = 'rgb(54, 102, 235)';
             dataset.AirMean.data = {
-                labels: timeLabels(data.air[4][2]),
+                labels: [],
                 datasets: [
                 {
-                    //lineTension: 0,
                     label: 'Ср. температура воздуха °C',
                     backgroundColor: color_air_temperature,
                     borderColor: color_air_temperature,
-                    data: data.air[4][0],
+                    data: [],
                     fill: false,
                     pointBorderColor: default_dot_color,
                     pointBackgroundColor: default_dot_color,
@@ -569,11 +569,10 @@
                     pointHoverBorderColor: color_air_temperature,
                 },
                 {
-                    //lineTension: 0,
                     label: 'Ср. влажность воздуха %',
                     backgroundColor: color_air_humidity,
                     borderColor: color_air_humidity,
-                    data: data.air[4][1],
+                    data: [],
                     fill: false,
                     pointBorderColor: default_dot_color,
                     pointBackgroundColor: default_dot_color,
@@ -585,14 +584,14 @@
   
             for(let i = 0; i < 4; i++){
                 dataset.AirSensors[i].data = {
-                    labels: timeLabels(data.air[i][2]),
+                    labels: [],
                     datasets: [
                     {
                         //lineTension: 0,
                         label: 'Температура воздуха °C ( Датчик ' + (i+1) + ' )',
                         backgroundColor: color_air_temperature,
                         borderColor: color_air_temperature,
-                        data: data.air[i][0],
+                        data: [],
                         fill: false,
                         pointBorderColor: color_air_temperature,
                         pointBackgroundColor: color_air_temperature,
@@ -604,7 +603,7 @@
                         label: 'Влажность воздуха % ( Датчик ' + (i+1) + ' )',
                         backgroundColor: color_air_humidity,
                         borderColor: color_air_humidity,
-                        data: data.air[i][1],
+                        data: [],
                         fill: false,
                         pointBorderColor: default_dot_color,
                         pointBackgroundColor: default_dot_color,
@@ -617,14 +616,13 @@
             
             for(let i = 0; i < 6; i++){
                 dataset.GroundSensors[i].data = {
-                    labels: timeLabels(data.ground[i][1]),
+                    labels: [],
                     datasets: [
                     {
-                        //lineTension: 0,
                         label: 'Влажность почвы % ( Датчик ' + (i+1) + ' )',
                         backgroundColor: color_ground_humidity,
                         borderColor: color_ground_humidity,
-                        data: data.ground[i][0],
+                        data: [],
                         fill: false,
                         pointBorderColor: default_dot_color,
                         pointBackgroundColor: default_dot_color,
@@ -634,7 +632,7 @@
                     ]
                 }
             }
-            draw_graph(current_graph.name, current_graph.id);
+            
         }
         async function get_data_from_api(){
             let response = await fetch(url);
@@ -643,7 +641,7 @@
                 let json = await response.json();
                 console.log(json);
                 data = json.result;
-                update_dataset();
+                draw_graph(current_graph.name, current_graph.id);
                 update_last_data_from_sensors_elements();
                 api_update_states_and_params();
             }
@@ -721,6 +719,7 @@
                 update_states();
             }
         }
+        initiate_dataset();
         initiate_states_elements();
         initiate_params_elements();
         initiate_sensors_elements();
@@ -795,8 +794,9 @@
             <td>35</td>
         </tr>
         */
-        function update_table(is_it_air_data){
-            if (is_it_air_data){
+        function update_table(){
+            console.log(data);
+            if (current_graph.name != "GroundSensors"){
                 table.innerHTML = `
                     <tr>
                         <th scope="col">Время</th>
@@ -812,23 +812,25 @@
                         <th scope="col">Средняя влажность</th>
                     </tr>
                 `;
-                for(let i = 0; i < dataset.AirMean.data.datasets[0].data.length; i++){
-                    table.innerHTML += `
+                for(let i = 0; i < data.air[4][2].length; i++){
+                    table.innerHTML += 
+                    `
                     <tr>
-                        <th scope="row">${dataset.AirMean.data.labels[i]}</th>
-                        <td>${dataset.AirSensors[0].data.datasets[0].data[i]}</td>
-                        <td>${dataset.AirSensors[1].data.datasets[0].data[i]}</td>
-                        <td>${dataset.AirSensors[2].data.datasets[0].data[i]}</td>
-                        <td>${dataset.AirSensors[3].data.datasets[0].data[i]}</td>
-                        <td>${dataset.AirMean.data.datasets[0].data[i]}</td>
+                        <th scope="row">${toDateTime(data.air[4][2][i])}</th>
+                        <td>${data.air[0][0][i]}</td>
+                        <td>${data.air[1][0][i]}</td>
+                        <td>${data.air[2][0][i]}</td>
+                        <td>${data.air[3][0][i]}</td>
+                        <td>${data.air[4][0][i]}</td>
 
-                        <td>${dataset.AirSensors[0].data.datasets[1].data[i]}</td>
-                        <td>${dataset.AirSensors[1].data.datasets[1].data[i]}</td>
-                        <td>${dataset.AirSensors[2].data.datasets[1].data[i]}</td>
-                        <td>${dataset.AirSensors[3].data.datasets[1].data[i]}</td>
-                        <td>${dataset.AirMean.data.datasets[0].data[i]}</td>
+                        <td>${data.air[0][1][i]}</td>
+                        <td>${data.air[1][1][i]}</td>
+                        <td>${data.air[2][1][i]}</td>
+                        <td>${data.air[3][1][i]}</td>
+                        <td>${data.air[4][1][i]}</td>
                     </tr>
-                    `;
+                    `
+                    ;
                 }
             }else{
                 table.innerHTML = `
@@ -842,45 +844,60 @@
                         <th scope="col">6</th>
                     </tr>
                 `;
-                for(let i = 0; i < dataset.AirMean.data.datasets[0].data.length; i++){
+                for(let i = 0; i < data.air[4][2].length; i++){
                     table.innerHTML += `
                     <tr>
-                        <th scope="row">${dataset.AirMean.data.labels[i]}</th>
-                        <td>${dataset.GroundSensors[0].data.datasets[0].data[i]}</td>
-                        <td>${dataset.GroundSensors[1].data.datasets[0].data[i]}</td>
-                        <td>${dataset.GroundSensors[2].data.datasets[0].data[i]}</td>
-                        <td>${dataset.GroundSensors[3].data.datasets[0].data[i]}</td>
-                        <td>${dataset.GroundSensors[4].data.datasets[0].data[i]}</td>
-                        <td>${dataset.GroundSensors[5].data.datasets[0].data[i]}</td>
+                        <th scope="row">${toDateTime(data.air[4][2][i])}</th>
+                        <td>${data.ground[0][0][i]}</td>
+                        <td>${data.ground[1][0][i]}</td>
+                        <td>${data.ground[2][0][i]}</td>
+                        <td>${data.ground[3][0][i]}</td>
+                        <td>${data.ground[4][0][i]}</td>
+                        <td>${data.ground[5][0][i]}</td>
                     </tr>
                     `;
                 }
             }
         }
+        
         function draw_graph(name="", sensor_id=0){
-            let new_data;
-            let is_it_air_data = false;
             if (name=="AirMean"){
-                new_data = dataset.AirMean.data;
-                is_it_air_data = true;
+                if (current_graph.name != name){
+                    chart.data = dataset.AirMean.data;
+                }
+
+                chart.data.datasets[0].data = data.air[4][0];
+                chart.data.datasets[1].data = data.air[4][1];
+                chart.data.labels = timeLabels(data.air[4][2]);
             }
             if (name=="AirSensors"){
-                if (sensor_id <= 4 && sensor_id >= 0){
-                    new_data = dataset.AirSensors[sensor_id].data;
+
+                if (current_graph.name != name || sensor_id != current_graph.id){
+                    chart.data = dataset.AirSensors[sensor_id].data;
                 }
-                is_it_air_data = true;
+
+                if (sensor_id <= 4 && sensor_id >= 0){
+                    chart.data.datasets[0].data = data.air[sensor_id][0];
+                    chart.data.datasets[1].data = data.air[sensor_id][1];
+                    chart.data.labels = timeLabels(data.air[sensor_id][2]);
+                }
             }
             if (name=="GroundSensors"){
-                if (sensor_id <= 6 && sensor_id >= 0)
-                new_data = dataset.GroundSensors[sensor_id].data;
+
+                if (current_graph.name != name || sensor_id != current_graph.id){
+                    chart.data = dataset.GroundSensors[sensor_id].data;
+                }
+
+                if (sensor_id <= 6 && sensor_id >= 0){
+                    chart.data.datasets[0].data = data.ground[sensor_id][0];
+                    chart.data.labels = timeLabels(data.ground[sensor_id][1]);
+                }
             }
-            if (new_data !== undefined){
-                current_graph.name = name;
-                current_graph.id = sensor_id;
-                chart.data = new_data;
-                update_table(is_it_air_data);
-                chart.update();
-            }
+            current_graph.name = name;
+            current_graph.id = sensor_id;
+            
+            update_table();
+            chart.update();
         }
         async function switch_system(system = '', watering_id=0){
             let url_system = `http://127.0.0.1:80/api/${system}`;
