@@ -1,3 +1,4 @@
+import sqlite3
 import requests
 from . import greenhouse_api
 from .responses import SuccessResponse, ErrorResponse
@@ -193,48 +194,40 @@ def emergency():
 
     return SuccessResponse({"state": current_app.config["settings"]["emergency"]})
 
-# http://127.0.0.1:80/api/add_temp_hum
-@bp.route('/add_temp_hum', methods=['POST'])
-def add_temp_hum():
+# http://127.0.0.1:80/api/add_data
+@bp.route('/add_data', methods=['POST'])
+def add_data():
     data = request.get_json()
 
-    check_parameters(data, (("id", int), ("temperature", float, int), ("humidity", float, int)))
+    check_parameters(data, (("air", list), ("ground", list)))
 
-    id = data.get("id", None)
-    if not id in range(1, 5):
-        return ErrorResponse("field \"id\" incorrect", 400)
+    air_data = data.get("air", None)
+    if len(air_data) != 4:
+        return ErrorResponse("field \"air\" incorrect", 400)
 
-    temperature = data.get("temperature", None)
-    humidity = data.get("humidity", None)
+    for sensor_data in air_data:
+        if (type(sensor_data) != list
+            or (type(sensor_data[0]) != float and type(sensor_data[0]) != int)
+            or (type(sensor_data[1]) != float and type(sensor_data[1]) != int)):
+            return ErrorResponse("field \"air\" incorrect", 400)
 
-    db.add_air_temp_hum(id, temperature, humidity)
+    ground_data = data.get("ground", None)
+    if len(ground_data) != 6:
+        return ErrorResponse("field \"ground\" incorrect", 400)
 
-    resp_data = {
-        "id": id,
-        "temperature": temperature,
-        "humidity": humidity
-    }
+    for ground_hum in ground_data:
+        if type(ground_hum) != float and type(ground_hum) != int:
+            return ErrorResponse("field \"ground\" incorrect", 400)
 
-    return SuccessResponse(resp_data)
+    temps = [sensor_data[0] for sensor_data in air_data]
+    hums = [sensor_data[1] for sensor_data in air_data]
 
-# http://127.0.0.1:80/api/add_hum
-@bp.route('/add_hum', methods=['POST'])
-def add_hum():
-    data = request.get_json()
+    avg_temp = round(sum(temps) / len(temps), 2)
+    avg_hum = round(sum(hums) / len(hums), 2)
+        
+    try:
+        db.add_data_from_sensors(ground_data, air_data, avg_temp, avg_hum)
+    except sqlite3.IntegrityError as e:
+        print("Error: ", e)
 
-    check_parameters(data, (("id", int), ("humidity", float, int)))
-
-    id = data.get("id", None)
-    if not id in range(1, 7):
-        return ErrorResponse("field \"id\" incorrect", 400)
-
-    humidity = data.get("humidity", None)
-
-    db.add_ground_hum(id, humidity)
-
-    resp_data = {
-        "id": id,
-        "humidity": humidity
-    }
-
-    return SuccessResponse(resp_data)
+    return SuccessResponse({})

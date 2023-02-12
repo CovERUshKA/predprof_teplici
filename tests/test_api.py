@@ -190,78 +190,90 @@ def test_emergency(client : FlaskClient, app):
     response = client.patch("/api/emergency", json=json)
     assert response.status_code == 404
 
-def test_add_hum(client : FlaskClient, app):
+def test_add_data(client : FlaskClient, app):
     json = {
-        "id": 1,
-        "humidity": 11.2
+        "air": [
+            [13.2, 13.3],
+            [13.2, 13.3],
+            [13.2, 13.3],
+            [13.2, 13.3]
+        ],
+        "ground": [13.2, 13.2, 13.2, 13.2, 13.2, 13.2]
     }
-    response = client.post("/api/add_hum", json=json)
+    response = client.post("/api/add_data", json=json)
     assert response.status_code == 200
 
     json = {
-        "id": 1,
-        "humidity": 11
+        "air": [
+            [13, 13.3],
+            [13, 13],
+            [13.2, 13],
+            [13.2, 13.3]
+        ],
+        "ground": [13.2, 13, 13, 13, 13.2, 13.2]
     }
-    response = client.post("/api/add_hum", json=json)
+    response = client.post("/api/add_data", json=json)
     assert response.status_code == 200
 
     json = {
-        "id": 7,
-        "humidity": 11.2
+        "air": [
+            [13.2, 13.3],
+            [13.2, 13.3],
+            [13.2, 13.3],
+            ["13.2", 13.3]
+        ],
+        "ground": [13.2, 13.2, 13.2, 13.2, 13.2, 13.2]
     }
-    response = client.post("/api/add_hum", json=json)
+    response = client.post("/api/add_data", json=json)
     assert response.status_code == 400
 
     json = {
-        "id": 1
+        "air": [
+            [13.2, 13.3],
+            [13.2, 13.3],
+            [13.2, 13.3],
+            [13.2, 13.3]
+        ],
+        "ground": ["13.2", 13.2, 13.2, 13.2, 13.2, 13.2]
     }
-    response = client.post("/api/add_hum", json=json)
-    assert response.status_code == 404
-
-def test_add_temp_hum(client : FlaskClient, app):
-    json = {
-        "id": 1,
-        "temperature": 11.3,
-        "humidity": 11.2
-    }
-    response = client.post("/api/add_temp_hum", json=json)
-    assert response.status_code == 200
-
-    json = {
-        "id": 1,
-        "temperature": 11,
-        "humidity": 11.2
-    }
-    response = client.post("/api/add_temp_hum", json=json)
-    assert response.status_code == 200
-
-    json = {
-        "id": 1,
-        "temperature": 11,
-        "humidity": 11
-    }
-    response = client.post("/api/add_temp_hum", json=json)
-    assert response.status_code == 200
-
-    json = {
-        "id": 7,
-        "temperature": 11.2,
-        "humidity": 11.2
-    }
-    response = client.post("/api/add_temp_hum", json=json)
+    response = client.post("/api/add_data", json=json)
     assert response.status_code == 400
 
     json = {
-        "id": 1,
-        "humidity": 11.2
+        "air": [
+            [13.2, 13.3],
+            [13.2, 13.3],
+            [13.2, 13.3]
+        ],
+        "ground": [13.2, 13.2, 13.2, 13.2, 13.2, 13.2]
     }
-    response = client.post("/api/add_temp_hum", json=json)
+    response = client.post("/api/add_data", json=json)
+    assert response.status_code == 400
+
+    json = {
+        "air": [
+            [13.2, 13.3],
+            [13.2, 13.3],
+            [13.2, 13.3],
+            [13.2, 13.3]
+        ],
+        "ground": [13.2, 13.2, 13.2, 13.2, 13.2]
+    }
+    response = client.post("/api/add_data", json=json)
+    assert response.status_code == 400
+
+    json = {
+        "ground": [13.2, 13.2, 13.2, 13.2, 13.2, 13.2]
+    }
+    response = client.post("/api/add_data", json=json)
     assert response.status_code == 404
 
     json = {
-        "id": 1,
-        "temperature_invalid": 11,
-        "humidity": 11.2
+        "air": [
+            [13.2, 13.3],
+            [13.2, 13.3],
+            [13.2, 13.3]
+        ]
     }
-    response = client.post("/api/add_temp_hum", json=json)
+    response = client.post("/api/add_data", json=json)
     assert response.status_code == 404

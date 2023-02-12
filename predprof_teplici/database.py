@@ -76,7 +76,7 @@ def add_air_temp_hum(sensor_id, temperature, humidity, time_collected = None):
 
     return True
 
-def add_data_from_sensors(ground_humidities, air_temps_hums, avg_temp, avg_hum, time_collected):
+def add_data_from_sensors(ground_humidities, air_temps_hums, avg_temp, avg_hum, time_collected = None):
     """Добавляем данные со всех датчиков в БД"""
 
     if ground_humidities == None:
@@ -90,7 +90,7 @@ def add_data_from_sensors(ground_humidities, air_temps_hums, avg_temp, avg_hum, 
         raise Exception((f"Incorrect count of ground humidities: {len(air_temps_hums)}"))
 
     if time_collected == None:
-        raise Exception(("No time when data been collected"))
+        time_collected = get_current_time()
 
     try:
         lock.acquire(True)
