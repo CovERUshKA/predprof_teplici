@@ -475,17 +475,22 @@
             name: 'AirMean',
             id: 0
         };
-        
+        function addZeros(x){
+            // Добавление нулей для получения двузначного числа
+            // ("0" + x).slice(-2) == 1 -> 01 == 12 -> 12
+            return ("0" + x).slice(-2)
+        }
         function toDateTime(millisecs) {
+            // Миллисекунды в дату ( 2023-02-17 20:38:05 )
             var t = new Date(0);
             t.setMilliseconds(millisecs);
-            // ("0" + x).slice(-2) == 1 -> 01 == 12 -> 12
-            let date = t.getFullYear() + '-' + (t.getMonth()+1) + '-' + t.getDate();
-            let time = ("0" + t.getHours()).slice(-2) + ':' + ("0" + t.getMinutes()).slice(-2) + ':' + ("0" + t.getSeconds()).slice(-2);
+            let date = t.getFullYear() + '-' + addZeros(t.getMonth()+1) + '-' + addZeros(t.getDate());
+            let time = addZeros(t.getHours()) + ':' + addZeros(t.getMinutes()) + ':' + addZeros(t.getSeconds());
             return  date + ' ' + time;
         }
 
         function timeLabels(arr_of_times){
+            // Преобразование времени в дату
             let times = arr_of_times.slice()
             for(let i = 0; i < times.length; i++){
                 times[i] = toDateTime(times[i]);
@@ -525,7 +530,7 @@
                 if (this.value != null){
                     this.element.innerHTML = this.text + " " + this.value;
                 }else{
-                    this.element.innerHTML = this.text + " " + "Не установленно";
+                    this.element.innerHTML = this.text + " " + "Не установлено";
                 }
             }
 
@@ -556,7 +561,7 @@
         function get_last_elem(arr){
             return arr[arr.length - 1]
         }
-        function update_last_data_from_sensors_elements(){
+        async function update_last_data_from_sensors_elements(){
             
             //arr[arr.length - 1]
            sensors_elements["mean_temp_air_sensor"].set_value(get_last_elem(data.air[4][0]));
@@ -699,18 +704,6 @@
             }
             
         }
-        async function get_data_from_api(){
-            let response = await fetch(url);
-
-            if (response.ok){
-                let json = await response.json();
-                console.log(json);
-                data = json.result;
-                draw_graph(current_graph.name, current_graph.id);
-                update_last_data_from_sensors_elements();
-                api_update_states_and_params();
-            }
-        }
         function initiate_states_elements(){
            states_elements["fork_drive"] = new State_System_Element('fork_drive_element');
            states_elements["total_hum"] = new State_System_Element('total_hum_element');
@@ -768,7 +761,20 @@
            states_elements["H_element"].set_value(states["parameters"]["H"]);
            states_elements["Hb_element"].set_value(states["parameters"]["Hb"]);
         }
-        function update_params_in_form(){
+        async function get_data_from_api(){
+            let response = await fetch(url);
+
+            if (response.ok){
+                let json = await response.json();
+                console.log(json);
+                data = json.result;
+                draw_graph(current_graph.name, current_graph.id);
+                await update_last_data_from_sensors_elements();
+                await api_update_states_and_params();
+                
+            }
+        }
+        async function update_params_in_form(){
            parameters_form.max_temp.value = states["parameters"]["T"];
            parameters_form.min_hum.value = states["parameters"]["H"];
            parameters_form.min_ground_hum.value = states["parameters"]["Hb"];
@@ -781,7 +787,6 @@
                 states = json.result;
                 update_params();
                 update_states();
-                update_params_in_form();
             }
         }
         initiate_dataset();
@@ -789,7 +794,18 @@
         initiate_params_elements();
         initiate_sensors_elements();
         
-        get_data_from_api();
+        /*get_data_from_api();
+        setTimeout(
+            () => {
+                console.log(states);
+                update_params_in_form();
+            }, 1000
+        );*/
+        get_data_from_api().then(
+            () => {
+                update_params_in_form();
+            }
+        );
         var chart = new Chart(ctx, {
             type: 'line',
             data: dataset.AirMean.data,
