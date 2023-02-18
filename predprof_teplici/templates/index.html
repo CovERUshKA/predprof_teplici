@@ -6,6 +6,7 @@
     <!--
         notify
     -->
+
     <link rel="stylesheet" type="text/css" href="static/styles/toast.css" />
     <script src="static/js/toast.js"></script>
 
@@ -129,17 +130,14 @@
 }
 
 .form.big {
-    width: 1000px;
     height: auto;
+    width: 400px;
 }
 .input-line{
     display: flex;
     flex-basis: auto;
     width: 100%;
     height: 50px;
-}
-.input-container.small {
-  width: 47%;
 }
 .input-line > .input-container.small {
   flex: auto;
@@ -211,46 +209,46 @@
 }
 
   </style>
-  <body>
+   <body>
     <div width="800" height="450">
         <canvas id="GRAAAPH" ></canvas>
     </div>
     <div class="col-big">
         <div class="col">
             <button class="mean" onclick="draw_graph(type='AirMean', sensor_id=0)">
-                Ср. температура воздуха
+                Ср. температура и влажность воздуха
             </button>
             <button class="sensor" onclick="draw_graph(type='AirSensors', sensor_id=0)">
-                Сэнсор воздуха №1
+                Сенсор воздуха №1
             </button>
             <button class="sensor" onclick="draw_graph(type='AirSensors', sensor_id=1)">
-                Сэнсор воздуха №2
+                Сенсор воздуха №2
             </button>
             <button class="sensor" onclick="draw_graph(type='AirSensors', sensor_id=2)">
-                Сэнсор воздуха №3
+                Сенсор воздуха №3
             </button>
             <button class="sensor" onclick="draw_graph(type='AirSensors', sensor_id=3)">
-                Сэнсор воздуха №4
+                Сенсор воздуха №4
             </button>
         </div>
         <div class="col">
             <button class="sensor" onclick="draw_graph(type='GroundSensors', sensor_id=0)">
-                Влажность земли №1
+                Влажность в бороздке №1
             </button>
             <button class="sensor" onclick="draw_graph(type='GroundSensors', sensor_id=1)">
-                Влажность земли №2
+                Влажность в бороздке №2
             </button>
             <button class="sensor" onclick="draw_graph(type='GroundSensors', sensor_id=2)">
-                Влажность земли №3
+                Влажность в бороздке №3
             </button>
             <button class="sensor" onclick="draw_graph(type='GroundSensors', sensor_id=3)">
-                Влажность земли №4
+                Влажность в бороздке №4
             </button>
             <button class="sensor" onclick="draw_graph(type='GroundSensors', sensor_id=4)">
-                Влажность земли №5
+                Влажность в бороздке №5
             </button>
             <button class="sensor" onclick="draw_graph(type='GroundSensors', sensor_id=5)">
-                Влажность земли №6
+                Влажность в бороздке №6
             </button>
         </div>
         <!---->
@@ -290,67 +288,67 @@
         </div>
         <div class="col">
             <div class="param" id="groud_hum_sensor_1">
-                1 влажность:  
+                Влажность в бороздке №1 :
             </div>
             <div class="param" id="groud_hum_sensor_2">
-                2 влажность:  
+                Влажность в бороздке №2 :
             </div>
             <div class="param" id="groud_hum_sensor_3">
-                3 влажность:  
+                Влажность в бороздке №3 :
             </div>
             <div class="param" id="groud_hum_sensor_4">
-                4 влажность:  
+                Влажность в бороздке №4 :
             </div>
             <div class="param" id="groud_hum_sensor_5">
-                5 влажность:  
+                Влажность в бороздке №5 :
             </div>
             <div class="param" id="groud_hum_sensor_6">
-                6 влажность:  
+                Влажность в бороздке №6 :
             </div>
             <button class="sensor" id="fork_drive_element" onclick="switch_system('fork_drive')">
-                Поливалка охлаждения воздуха
+                Система открытия форточек
             </button>
             <button class="sensor" id="total_hum_element" onclick="switch_system('total_hum')">
-                Поливалка влажного воздуха
+                Система увлажнения воздуха
             </button>
             <button class="sensor" id="emergency_element" onclick="switch_system('emergency')">
-                Поливалка экстренного режима
+                Экстренный режим
             </button>
         </div>
         <div class="col">
             <button class="sensor" id="watering_1_element" onclick="switch_system('watering', 0)">
-                Поливалка земли №1
+                Полив бороздки №1
             </button>
             <button class="sensor" id="watering_2_element" onclick="switch_system('watering', 1)">
-                Поливалка земли №2
+                Полив бороздки №2
             </button>
             <button class="sensor" id="watering_3_element" onclick="switch_system('watering', 2)">
-                Поливалка земли №3
+                Полив бороздки №3
             </button>
             <button class="sensor" id="watering_4_element" onclick="switch_system('watering', 3)">
-                Поливалка земли №4
+                Полив бороздки №4
             </button>
             <button class="sensor" id="watering_5_element" onclick="switch_system('watering', 4)">
-                Поливалка земли №5
+                Полив бороздки №5
             </button>
             <button class="sensor" id="watering_6_element" onclick="switch_system('watering', 5)">
-                Поливалка земли №6
+                Полив бороздки №6
             </button>
         </div>
         
         <div class="col">
             <div class="param" id="T_element">
-                Маккс температура воздуха:  
+                Макс. температура воздуха:  
             </div>
             <div class="param" id="H_element">
-                Мин влажность воздуха:  
+                Мин. влажность воздуха:  
             </div>
             <div class="param" id="Hb_element">
-                Мин влажность земли:  
+                Мин. влажность земли:  
             </div>
         </div>
     </div>
-    <p>Тэйбл оф чего-то-с</p>
+    <h2>Таблица данных</h2>
     <table id="table">
     </table>
     
@@ -381,72 +379,72 @@
             <div class="input-line">
                 <div class="input-container small ic2">
                     <input id="add_air_temp_sensor_1" class="input" type="number" step="0.1" placeholder=" " />
-                    <label for="add_air_temp_sensor_1" class="placeholder">температура воздуха</label>
+                    <label for="add_air_temp_sensor_1" class="placeholder">температура №1</label>
                 </div>
                 
                 <div class="input-container small ic2">
                     <input id="add_air_hum_sensor_1" class="input" type="number" step="0.1" placeholder=" " />
-                    <label for="add_air_hum_sensor_1" class="placeholder">влажность воздуха</label>
+                    <label for="add_air_hum_sensor_1" class="placeholder">влажность №1</label>
                 </div>
             </div>
             <div class="input-line">
                 <div class="input-container small ic2">
                     <input id="add_air_temp_sensor_2" class="input" type="number" step="0.1" placeholder=" " />
-                    <label for="add_air_temp_sensor_2" class="placeholder">температура воздуха</label>
+                    <label for="add_air_temp_sensor_2" class="placeholder">температура №2</label>
                 </div>
                 
                 <div class="input-container small ic2">
                     <input id="add_air_hum_sensor_2" class="input" type="number" step="0.1" placeholder=" " />
-                    <label for="add_air_hum_sensor_2" class="placeholder">влажность воздуха</label>
+                    <label for="add_air_hum_sensor_2" class="placeholder">влажность №2</label>
                 </div>
             </div>
             <div class="input-line">
                 <div class="input-container small ic2">
                     <input id="add_air_temp_sensor_3" class="input" type="number" step="0.1" placeholder=" " />
-                    <label for="add_air_temp_sensor_3" class="placeholder">температура воздуха</label>
+                    <label for="add_air_temp_sensor_3" class="placeholder">температура №3</label>
                 </div>
                 
                 <div class="input-container small ic2">
                     <input id="add_air_hum_sensor_3" class="input" type="number" step="0.1" placeholder=" " />
-                    <label for="add_air_hum_sensor_3" class="placeholder">влажность воздуха</label>
+                    <label for="add_air_hum_sensor_3" class="placeholder">влажность №3</label>
                 </div>
             </div>
             <div class="input-line">
                 <div class="input-container small ic2">
                     <input id="add_air_temp_sensor_4" class="input" type="number" step="0.1" placeholder=" " />
-                    <label for="add_air_temp_sensor_4" class="placeholder">температура воздуха</label>
+                    <label for="add_air_temp_sensor_4" class="placeholder">температура №4</label>
                 </div>
                 
                 <div class="input-container small ic2">
                     <input id="add_air_hum_sensor_4" class="input" type="number" step="0.1" placeholder=" " />
-                    <label for="add_air_hum_sensor_4" class="placeholder">влажность воздуха</label>
+                    <label for="add_air_hum_sensor_4" class="placeholder">влажность №4</label>
                 </div>
             </div>
            
             <div class="subtitle">Сенсоры почвы</div>
             <div class="input-container ic2">
                 <input id="add_ground_hum_sensor_1" class="input" type="number" step="0.1" placeholder=" " />
-                <label for="add_ground_hum_sensor_1" class="placeholder">влажность почвы №1</label>
+                <label for="add_ground_hum_sensor_1" class="placeholder">влажность №1</label>
             </div>
             <div class="input-container ic2">
                 <input id="add_ground_hum_sensor_2" class="input" type="number" step="0.1" placeholder=" " />
-                <label for="add_ground_hum_sensor_2" class="placeholder">влажность почвы №2</label>
+                <label for="add_ground_hum_sensor_2" class="placeholder">влажность №2</label>
             </div>
             <div class="input-container ic2">
                 <input id="add_ground_hum_sensor_3" class="input" type="number" step="0.1" placeholder=" " />
-                <label for="add_ground_hum_sensor_3" class="placeholder">влажность почвы №3</label>
+                <label for="add_ground_hum_sensor_3" class="placeholder">влажность №3</label>
             </div>
             <div class="input-container ic2">
                 <input id="add_ground_hum_sensor_4" class="input" type="number" step="0.1" placeholder=" " />
-                <label for="add_ground_hum_sensor_4" class="placeholder">влажность почвы №4</label>
+                <label for="add_ground_hum_sensor_4" class="placeholder">влажность №4</label>
             </div>
             <div class="input-container ic2">
                 <input id="add_ground_hum_sensor_5" class="input" type="number" step="0.1" placeholder=" " />
-                <label for="add_ground_hum_sensor_5" class="placeholder">влажность почвы №5</label>
+                <label for="add_ground_hum_sensor_5" class="placeholder">влажность №5</label>
             </div>
             <div class="input-container ic2">
                 <input id="add_ground_hum_sensor_6" class="input" type="number" step="0.1" placeholder=" " />
-                <label for="add_ground_hum_sensor_6" class="placeholder">влажность почвы №6c</label>
+                <label for="add_ground_hum_sensor_6" class="placeholder">влажность №6</label>
             </div>
             
         </form>
@@ -458,9 +456,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script>
+        // ссылка для получения данных с сенсоров
         const url = "http://127.0.0.1:80/api/sensors_data?time_period=100";
+        // ссылка для получения состояний систем (полива, окна, увлажнения)
         const url_states = "http://127.0.0.1:80/api/state";
+        // ссылка для получения устновленных параметров T, H, Hb
         const url_system = `http://127.0.0.1:80/api/parameters`;
+        // ссылка для ручного ввода показаний с датчиков
         const url_set_sensors_data = "http://127.0.0.1:80/api/add_data";
 
         let ctx = document.getElementById('GRAAAPH').getContext("2d");
@@ -473,15 +475,22 @@
             name: 'AirMean',
             id: 0
         };
-        
-        function toDateTime(secs) {
-            var t = new Date(0);
-            t.setMilliseconds(secs);
+        function addZeros(x){
+            // Добавление нулей для получения двузначного числа
             // ("0" + x).slice(-2) == 1 -> 01 == 12 -> 12
-            return ' ' + t.getFullYear() + ' ' + (t.getMonth()+1) + ' ' + t.getDate() + ' ' + ("0" + t.getHours()).slice(-2) + ':' + ("0" + t.getMinutes()).slice(-2) + ':' + ("0" + t.getSeconds()).slice(-2);
+            return ("0" + x).slice(-2)
+        }
+        function toDateTime(millisecs) {
+            // Миллисекунды в дату ( 2023-02-17 20:38:05 )
+            var t = new Date(0);
+            t.setMilliseconds(millisecs);
+            let date = t.getFullYear() + '-' + addZeros(t.getMonth()+1) + '-' + addZeros(t.getDate());
+            let time = addZeros(t.getHours()) + ':' + addZeros(t.getMinutes()) + ':' + addZeros(t.getSeconds());
+            return  date + ' ' + time;
         }
 
         function timeLabels(arr_of_times){
+            // Преобразование времени в дату
             let times = arr_of_times.slice()
             for(let i = 0; i < times.length; i++){
                 times[i] = toDateTime(times[i]);
@@ -521,7 +530,7 @@
                 if (this.value != null){
                     this.element.innerHTML = this.text + " " + this.value;
                 }else{
-                    this.element.innerHTML = this.text + " " + "Не установленно";
+                    this.element.innerHTML = this.text + " " + "Не установлено";
                 }
             }
 
@@ -552,7 +561,7 @@
         function get_last_elem(arr){
             return arr[arr.length - 1]
         }
-        function update_last_data_from_sensors_elements(){
+        async function update_last_data_from_sensors_elements(){
             
             //arr[arr.length - 1]
            sensors_elements["mean_temp_air_sensor"].set_value(get_last_elem(data.air[4][0]));
@@ -695,17 +704,6 @@
             }
             
         }
-        async function get_data_from_api(){
-            let response = await fetch(url);
-
-            if (response.ok){
-                let json = await response.json();
-                console.log(json);
-                data = json.result;
-                draw_graph(current_graph.name, current_graph.id);
-                update_last_data_from_sensors_elements();
-            }
-        }
         function initiate_states_elements(){
            states_elements["fork_drive"] = new State_System_Element('fork_drive_element');
            states_elements["total_hum"] = new State_System_Element('total_hum_element');
@@ -763,7 +761,20 @@
            states_elements["H_element"].set_value(states["parameters"]["H"]);
            states_elements["Hb_element"].set_value(states["parameters"]["Hb"]);
         }
-        function update_params_in_form(){
+        async function get_data_from_api(){
+            let response = await fetch(url);
+
+            if (response.ok){
+                let json = await response.json();
+                console.log(json);
+                data = json.result;
+                draw_graph(current_graph.name, current_graph.id);
+                await update_last_data_from_sensors_elements();
+                await api_update_states_and_params();
+                
+            }
+        }
+        async function update_params_in_form(){
            parameters_form.max_temp.value = states["parameters"]["T"];
            parameters_form.min_hum.value = states["parameters"]["H"];
            parameters_form.min_ground_hum.value = states["parameters"]["Hb"];
@@ -776,22 +787,25 @@
                 states = json.result;
                 update_params();
                 update_states();
-                update_params_in_form();
             }
         }
         initiate_dataset();
         initiate_states_elements();
         initiate_params_elements();
         initiate_sensors_elements();
-        /*
+        
+        /*get_data_from_api();
+        setTimeout(
+            () => {
+                console.log(states);
+                update_params_in_form();
+            }, 1000
+        );*/
         get_data_from_api().then(
-            function (result) {
-                api_update_states_and_params();
+            () => {
+                update_params_in_form();
             }
         );
-        */
-        get_data_from_api();
-        api_update_states_and_params();
         var chart = new Chart(ctx, {
             type: 'line',
             data: dataset.AirMean.data,
@@ -829,10 +843,13 @@
                     yAxes: [{
                         display: true,
                         ticks: {
+                            beginAtZero: true
+                        },
+                        /*
+                        ticks: {
                             suggestedMin: 20,
                             suggestedMax: 80,
                         },
-                        
                         afterTickToLabelConversion: function(data){
                             let xLabels = data.ticks;
 
@@ -840,6 +857,7 @@
                                 xLabels[i] = xLabels[i] + ' °C';
                             });
                         } 
+                        */
                     }]
                     
                 }
@@ -1085,7 +1103,6 @@
                 })
                 .then((response) => response.json());
             setTimeout(get_data_from_api, 100);
-            setTimeout(api_update_states_and_params, 100);
         }
         
 
