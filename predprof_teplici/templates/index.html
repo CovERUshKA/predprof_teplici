@@ -12,6 +12,11 @@
 
   </head>
   <style>
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
     .col{
         display: inline-block;
         width: 200px;
@@ -207,11 +212,24 @@
 .submit:active {
   background-color: #06b;
 }
+.half{
+    width: 50%;
+}
+.data{
+    display: flex;
 
+}
   </style>
    <body>
-    <div width="800" height="450">
-        <canvas id="GRAAAPH" ></canvas>
+    <div class="data">
+        <div class="half">
+            <canvas id="GRAAAPH" ></canvas>
+        </div>
+        <div class="half">
+            <h2>Таблица данных</h2>
+            <table id="table">
+            </table>
+        </div>
     </div>
     <div class="col-big">
         <div class="col">
@@ -338,19 +356,16 @@
         
         <div class="col">
             <div class="param" id="T_element">
-                Макс. температура воздуха:  
+                Макс. температура воздуха (T):  
             </div>
             <div class="param" id="H_element">
-                Мин. влажность воздуха:  
+                Мин. влажность воздуха (H):  
             </div>
             <div class="param" id="Hb_element">
-                Мин. влажность земли:  
+                Мин. влажность земли (Hb):  
             </div>
         </div>
     </div>
-    <h2>Таблица данных</h2>
-    <table id="table">
-    </table>
     
     <div class="form">
         <form name="set_parameters_form">
