@@ -7,8 +7,8 @@
         notify
     -->
 
-    <link rel="stylesheet" type="text/css" href="static/styles/toast.css" />
-    <script src="static/js/toast.js"></script>
+   <link rel="stylesheet" type="text/css" href="static/styles/toast.css" />
+   <script src="static/js/toast.js"></script>
 
   </head>
   <style>
@@ -1012,7 +1012,7 @@
                 sensors_elements["groud_hum_sensor"][watering_id].value > states_elements["Hb_element"].value  && states_elements["Hb_element"].value != undefined  && states_elements["Hb_element"].value != null){
                     new Toast({
                         title: false,
-                        text: `Влажность земли (${watering_id+1})  больше установленного минимума для поливания`,
+                        text: `Влажность в бороздке №${watering_id+1}  больше установленного минимума для поливания`,
                         theme: 'danger',
                         autohide: true,
                         interval: toast_time
