@@ -1,6 +1,6 @@
 import threading
 import sqlite3
-import time
+from .rest import get_current_time
 
 lock = threading.Lock()
 
@@ -41,27 +41,27 @@ def execute_and_fetchall(sql, parameters = ()):
 
     return ret
 
-def add_ground_hums(sensor_id, humidities, time_collected):
+def add_ground_hum(sensor_id, humidity, time_collected = None):
     """Добавляем данные о влажности земли"""
 
     if humidity == None:
         humidity = 0
 
     if sensor_id == None:
-        raise Exception(("No air sensor id"))
+        raise Exception("No air sensor id")
 
     if time_collected == None:
-        raise Exception(("No time when ground hum data been collected"))
+        time_collected = get_current_time()
     
-    execute_and_commit("INSERT into ground (humidity, timestamp) values (?, ?)", (humidity, time_collected))
+    execute_and_commit("INSERT into ground (sensor_id, humidity, timestamp) values (?, ?, ?)", (sensor_id, humidity, time_collected))
 
     return True
 
-def add_air_temp_hum(sensor_id, temperature, humidity, time_collected):
+def add_air_temp_hum(sensor_id, temperature, humidity, time_collected = None):
     """Добавляем данные о температуре и влажности воздуха"""
 
     if sensor_id == None:
-        raise Exception(("No air sensor id"))
+        raise Exception("No air sensor id")
 
     if temperature == None:
         temperature = 0
@@ -70,13 +70,13 @@ def add_air_temp_hum(sensor_id, temperature, humidity, time_collected):
         humidity = 0
 
     if time_collected == None:
-        raise Exception(("No time when data been collected"))
+        time_collected = get_current_time()
 
-    execute_and_commit("INSERT into air (sensor_id, temperature, humidity, timestamp) values (?, ?, ?)", (sensor_id, temperature, humidity, time_collected))
+    execute_and_commit("INSERT into air (sensor_id, temperature, humidity, timestamp) values (?, ?, ?, ?)", (sensor_id, temperature, humidity, time_collected))
 
     return True
 
-def add_data_from_sensors(ground_humidities, air_temps_hums, avg_temp, avg_hum, time_collected):
+def add_data_from_sensors(ground_humidities, air_temps_hums, avg_temp, avg_hum, time_collected = None):
     """Добавляем данные со всех датчиков в БД"""
 
     if ground_humidities == None:
@@ -90,7 +90,7 @@ def add_data_from_sensors(ground_humidities, air_temps_hums, avg_temp, avg_hum, 
         raise Exception((f"Incorrect count of ground humidities: {len(air_temps_hums)}"))
 
     if time_collected == None:
-        raise Exception(("No time when data been collected"))
+        time_collected = get_current_time()
 
     try:
         lock.acquire(True)
@@ -104,6 +104,8 @@ def add_data_from_sensors(ground_humidities, air_temps_hums, avg_temp, avg_hum, 
         cur.execute("INSERT into air (sensor_id, temperature, humidity, timestamp) values (?, ?, ?, ?)", (5, avg_temp, avg_hum, time_collected))
         
         con.commit()
+    except sqlite3.IntegrityError as e:
+        print("Error: ", e)
     finally:
         lock.release()
 
@@ -112,7 +114,7 @@ def add_data_from_sensors(ground_humidities, air_temps_hums, avg_temp, avg_hum, 
 def get_air_temp_hum(time_period):
     """Добавляем данные о температуре и влажности воздуха"""
 
-    cur_time = round(time.time())
+    cur_time = get_current_time()
 
     time_since = cur_time - time_period
 
@@ -123,9 +125,9 @@ def get_air_temp_hum(time_period):
 def get_all_data(time_period):
     """Берём данные из базы данных за период времени time_period"""
 
-    cur_time = round(time.time())
+    cur_time = get_current_time()
 
-    time_since = cur_time - time_period
+    time_since = cur_time - time_period * 1000
 
     try:
         lock.acquire(True)
