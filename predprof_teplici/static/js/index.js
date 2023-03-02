@@ -594,7 +594,7 @@ async function switch_system(system = '', watering_id=0){
         }
         if (!emergency && system == "total_hum"){
             if ((states_elements[system].state == 0 || states_elements[system].state == 2) &&
-            sensors_elements["mean_temp_air_sensor"].value > states_elements["H_element"].value && states_elements["Hb_element"].value != undefined  && states_elements["Hb_element"].value != null){
+            sensors_elements["mean_hum_air_sensor"].value > states_elements["H_element"].value && states_elements["Hb_element"].value != undefined  && states_elements["Hb_element"].value != null){
                 new Toast({
                     title: false,
                     text: 'Средняя влажность воздуха больше установленного минимума для общего увлажнения',
