@@ -5,7 +5,7 @@ from __init__ import create_app
 import collector
 
 
-def run_app(first, second):
+def app(first, second):
     # print(f'{first=}\n\n{second=}')
 # if __name__ == '__main__':
     app = create_app()
