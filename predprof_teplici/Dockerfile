@@ -10,5 +10,3 @@ RUN pip install --user -r requirements.txt
 ENV PATH=/root/.local/bin:$PATH
 
 COPY . .
-
-# CMD python main.py
