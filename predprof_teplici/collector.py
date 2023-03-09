@@ -60,7 +60,7 @@ async def infinite_collect():
             for sensor_id in range(1, 5):
                 tasks.append(asyncio.ensure_future(aget_air_temp_hum(session, sensor_id)))
 
-            rets = await asyncio.gather(tasks)
+            rets = await asyncio.gather(*tasks)
 
             all_ground_humidity = rets[0:6]
             all_air_temp_hum = rets[6:10]

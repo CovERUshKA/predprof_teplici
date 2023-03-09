@@ -7,13 +7,12 @@ import collector
 
 def app(first, second):
     print(f'{first=}\n\n{second=}')
-# if __name__ == '__main__':
     app = create_app()
 
     t = threading.Thread(target=asyncio.run, args=(collector.infinite_collect(),))
     t.start()
 
-    app.run(port=5000)
+    app.run(port=80)
 
     print("flask ended")
 
