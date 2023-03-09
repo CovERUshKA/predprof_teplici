@@ -13,7 +13,7 @@ if __name__ == '__main__':
     t = threading.Thread(target=asyncio.run, args=(collector.infinite_collect(),))
     t.start()
 
-    # app.run(debug=False,  port=80, host="0.0.0.0")
+    app.run(port=8081)
 
     print("flask ended")
 
