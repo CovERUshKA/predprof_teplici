@@ -5,7 +5,7 @@ from rest import get_current_time
 lock = threading.Lock()
 
 # Подключаемся к файлу базы данных
-con = sqlite3.connect("./data/main.db", check_same_thread=False)
+con = sqlite3.connect("app/predprof_teplici/data/main.db", check_same_thread=False)
 # Берём управление базой данных
 cur = con.cursor()
 
