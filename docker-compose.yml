@@ -30,3 +30,6 @@ services:
     build:
       context: ./collect
     restart: always
+
+    volumes:
+      - ./data:/app/data
