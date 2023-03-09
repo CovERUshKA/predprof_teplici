@@ -2,7 +2,7 @@ import asyncio
 import threading
 
 from __init__ import create_app 
-import collector
+import collector.collector
 
 
 def app(first, second):
