@@ -1,5 +1,6 @@
 import collector
 from asyncio import run
 
-if __name__ == '__main__':
+
+def start():
     run(collector.infinite_collect())
