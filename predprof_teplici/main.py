@@ -5,7 +5,7 @@ from __init__ import create_app
 import collector
 
 
-if __name__ == "__main__":
+def run_app():
     app = create_app()
 
     t = threading.Thread(target=asyncio.run, args=(collector.infinite_collect(),))
