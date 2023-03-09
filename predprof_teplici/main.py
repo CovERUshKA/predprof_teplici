@@ -5,9 +5,9 @@ from __init__ import create_app
 import collector
 
 
-# def run_app(first, second):
+def run_app(first, second):
     # print(f'{first=}\n\n{second=}')
-if __name__ == '__main__':
+# if __name__ == '__main__':
     app = create_app()
 
     t = threading.Thread(target=asyncio.run, args=(collector.infinite_collect(),))
