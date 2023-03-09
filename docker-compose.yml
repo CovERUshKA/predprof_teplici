@@ -7,10 +7,10 @@ services:
     build:
       context: ./predprof_teplici
     command:
-        'gunicorn --bind 0.0.0.0:80 main:app'
+        'gunicorn --bind 0.0.0.0:5000 main:app'
     restart: always
     expose:
-      - "80"
+      - "5000"
 
     volumes:
       - ./data:/app/data
