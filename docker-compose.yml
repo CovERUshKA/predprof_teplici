@@ -7,7 +7,7 @@ services:
     build:
       context: ./predprof_teplici
     command:
-        'gunicorn --worker-class=gevent --worker-connections=5000 --workers=3 main:app'
+      'gunicorn aiohttpdemo_polls.main:app --bind 0.0.0.0:5000 --worker-class aiohttp.GunicornWebWorker'
         # 'gunicorn --bind 0.0.0.0:5000 main:app'
     restart: always
     expose:
