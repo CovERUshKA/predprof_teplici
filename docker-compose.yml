@@ -27,11 +27,11 @@ services:
       - "80:80"
 
 
-  collector:
-    container_name: collector
-    build:
-      context: ./collect
-    restart: always
+  # collector:
+  #   container_name: collector
+  #   build:
+  #     context: ./collect
+  #   restart: always
 
-    volumes:
-      - ./main.db:/app/predprof_teplici/data/main.db
+  #   volumes:
+  #     - ./main.db:/app/predprof_teplici/data/main.db
