@@ -28,5 +28,5 @@ services:
   collector:
     container_name: collector
     build:
-      context: ./collector
+      context: ./collect
     restart: always
