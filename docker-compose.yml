@@ -13,7 +13,8 @@ services:
       - "5000"
 
     volumes:
-      - ./data:/app/data/
+      # - ./data:/app/data/
+      - ./main.db:/app/predprof_teplici/data/main.db
 
 
   nginx:
@@ -32,4 +33,4 @@ services:
     restart: always
 
     volumes:
-      - ./data:/app/data/
+      - ./main.db:/app/predprof_teplici/data/main.db
