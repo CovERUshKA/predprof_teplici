@@ -7,7 +7,7 @@ services:
     build:
       context: ./predprof_teplici
     command:
-        'gunicorn --bind 0.0.0.0:8081 main:run_app'
+        'gunicorn --bind 0.0.0.0:8081 main:ssapp'
     restart: always
     expose:
       - "8081"
