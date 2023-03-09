@@ -14,8 +14,8 @@ services:
 
     volumes:
       # - ./data:/app/data/
-      # - ./data/main.db:/app/predprof_teplici/data/main.db
-      - ./data:/data
+      - ./main.db:/app/predprof_teplici/data/main.db
+      # - ./data:/data
 
 
   nginx:
@@ -34,4 +34,4 @@ services:
     restart: always
 
     volumes:
-      - ./data:/data
+      - ./main.db:/app/predprof_teplici/data/main.db
