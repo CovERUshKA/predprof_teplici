@@ -13,7 +13,7 @@ def app(first, second):
     t = threading.Thread(target=asyncio.run, args=(collector.infinite_collect(),))
     t.start()
 
-    app.run(port=8081)
+    app.run()
 
     print("flask ended")
 
