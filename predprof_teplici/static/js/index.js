@@ -6,6 +6,8 @@ const url_states = "http://127.0.0.1:80/api/state";
 const url_system = `http://127.0.0.1:80/api/parameters`;
 // ссылка для ручного ввода показаний с датчиков
 const url_set_sensors_data = "http://127.0.0.1:80/api/add_data";
+// ссылка для смены графика показаний с датчиков
+const url_system_for_format = 'http://127.0.0.1:80/api/';
 
 let ctx = document.getElementById('GRAAAPH').getContext("2d");
 let table = document.getElementById('table');
@@ -554,7 +556,7 @@ function value_to_Number(x){
     return Number(Number(x).toFixed(1))
 }
 async function switch_system(system = '', watering_id=0){
-    let url_system = `http://127.0.0.1:80/api/${system}`;
+    let url_system = `${url_system_for_format}${system}`;
     let patch_body = {};
     let accept_switch_system = true;
     let emergency = states_elements["emergency"].state
