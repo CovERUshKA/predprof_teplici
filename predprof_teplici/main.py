@@ -8,8 +8,8 @@ def app(first, second):
     print(f'{first=}\n\n{second=}')
     app = create_app()
 
-    t = threading.Thread(target=asyncio.run)
-    t.start()
+    # t = threading.Thread(target=asyncio.run)
+    # t.start()
 
     app.run(port=5000)
 
