@@ -6,7 +6,7 @@ import collector
 
 
 def app(first, second):
-    # print(f'{first=}\n\n{second=}')
+    print(f'{first=}\n\n{second=}')
 # if __name__ == '__main__':
     app = create_app()
 
