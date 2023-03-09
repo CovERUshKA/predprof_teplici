@@ -7,14 +7,14 @@ services:
     build:
       context: ./predprof_teplici
     command:
-      'gunicorn aiohttpdemo_polls.main:app --bind 0.0.0.0:5000 --worker-class aiohttp.GunicornWebWorker'
-        # 'gunicorn --bind 0.0.0.0:5000 main:app'
+        'gunicorn --bind 0.0.0.0:5000 main:app'
     restart: always
     expose:
       - "5000"
 
     volumes:
       - ./data:/app/data
+
 
   nginx:
     image: nginx:latest
@@ -23,3 +23,10 @@ services:
     restart: always
     ports:
       - "80:80"
+
+
+  collector:
+    container_name: collector
+    build:
+      context: ./collector
+    restart: always

@@ -1,11 +1,12 @@
-import greenhouse_api
+from predprof_teplici import greenhouse_api
 import aiohttp
 import asyncio
 import requests
-import database as db
+from predprof_teplici import database as db
 import sqlite3
 import time
-from rest import get_current_time
+from predprof_teplici.rest import get_current_time
+
 
 end_working = False
 
