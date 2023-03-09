@@ -31,8 +31,6 @@ services:
     container_name: collector
     build:
       context: ./collect
-      command:
-        'gunicorn --bind 0.0.0.0:5000 main:start'
     restart: always
 
     volumes:
