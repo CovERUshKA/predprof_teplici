@@ -1,11 +1,11 @@
-from . import greenhouse_api
+import greenhouse_api
 import aiohttp
 import asyncio
 import requests
-from . import database as db
+import database as db
 import sqlite3
 import time
-from .rest import get_current_time
+from rest import get_current_time
 
 end_working = False
 

@@ -1,6 +1,6 @@
 import threading
 import sqlite3
-from .rest import get_current_time
+from rest import get_current_time
 
 lock = threading.Lock()
 

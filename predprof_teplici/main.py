@@ -1,7 +1,9 @@
 import asyncio
 import threading
 
-from predprof_teplici import create_app, collector
+from __init__ import create_app 
+import collector
+
 
 if __name__ == "__main__":
     app = create_app()

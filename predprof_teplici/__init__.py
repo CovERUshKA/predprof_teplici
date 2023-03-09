@@ -25,7 +25,7 @@ def create_app():
     def index():
         return render_template("index.html")
 
-    from predprof_teplici import api
+    import api
     app.register_blueprint(api.bp)
 
     return app
