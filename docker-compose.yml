@@ -8,10 +8,10 @@ services:
       context: ./predprof_teplici
       dockerfile: Dockerfile
     command:
-        bash -c 'gunicorn --bind 0.0.0.0:5000 main:app'
+        bash -c 'gunicorn --bind 0.0.0.0:5001 main:app'
     restart: always
     expose:
-      - "5000"
+      - "5001"
 
     volumes:
       # - ./data:/app/data/
