@@ -11,7 +11,7 @@ services:
         bash -c 'gunicorn --bind 0.0.0.0:5000 main:app'
     restart: always
     expose:
-      - "4444"
+      - "5000"
 
     volumes:
       # - ./data:/app/data/
