@@ -1,11 +1,11 @@
 // ссылка для получения данных с сенсоров
-const url = "http://45.147.177.204\/api/sensors_data?time_period=100";
+const url = "http://45.147.177.204/api/sensors_data?time_period=100";
 // ссылка для получения состояний систем (полива, окна, увлажнения)
-const url_states = "http://45.147.177.204\/api/state";
+const url_states = "http://45.147.177.204/api/state";
 // ссылка для получения устновленных параметров T, H, Hb
-const url_system = `http://45.147.177.204\/api/parameters`;
+const url_system = `http://45.147.177.204/api/parameters`;
 // ссылка для ручного ввода показаний с датчиков
-const url_set_sensors_data = "http://45.147.177.204\/api/add_data";
+const url_set_sensors_data = "http://45.147.177.204/api/add_data";
 
 let ctx = document.getElementById('GRAAAPH').getContext("2d");
 let table = document.getElementById('table');
@@ -554,7 +554,7 @@ function value_to_Number(x){
     return Number(Number(x).toFixed(1))
 }
 async function switch_system(system = '', watering_id=0){
-    let url_system = `http://45.147.177.204\/api/${system}`;
+    let url_system = `http://45.147.177.204/api/${system}`;
     let patch_body = {};
     let accept_switch_system = true;
     let emergency = states_elements["emergency"].state
