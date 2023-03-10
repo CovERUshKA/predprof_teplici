@@ -7,7 +7,7 @@ services:
     build:
       context: ./predprof_teplici
     command:
-        'gunicorn --bind 0.0.0.0:4444 --workers=5 main:app'
+        'gunicorn --bind 0.0.0.0:4444 main:app'
     restart: always
     expose:
       - "4444"
@@ -23,10 +23,11 @@ services:
     container_name: nginx
     build: ./nginx
     restart: always
+    depends_on:
+      - app
     ports:
       - "80:80"
-    # depends_on:
-    #   - app
+
 
 
   # collector:
