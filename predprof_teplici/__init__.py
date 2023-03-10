@@ -10,7 +10,7 @@ import requests
 import greenhouse_api
 from responses import SuccessResponse, ErrorResponse
 import database as db
-from __init__ import create_app 
+# from __init__ import create_app 
 
 
 from flask import (
