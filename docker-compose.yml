@@ -26,11 +26,11 @@ services:
       context: ./testapp
       dockerfile: Dockerfile
     command:
-        bash -c 'gunicorn --bind 0.0.0.0:5000 main:run_app'
+        bash -c 'gunicorn --bind 0.0.0.0:5002 main:run_app'
         # 'gunicorn --bind 0.0.0.0:5000 main:run_app'
     restart: always
     expose:
-      - "5000"
+      - "5002"
 
   nginx:
     image: nginx:latest
