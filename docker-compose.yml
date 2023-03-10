@@ -6,6 +6,7 @@ services:
     container_name: app
     build:
       context: ./predprof_teplici
+      # dockerfile: Dockerfile
     command:
         'gunicorn --bind 0.0.0.0:4444 main:app'
     restart: always
@@ -16,6 +17,8 @@ services:
       # - ./data:/app/data/
       - ./main.db:/app/predprof_teplici/data/main.db
       # - ./data:/data
+    env_file:
+        - ./.env
 
 
   nginx:
