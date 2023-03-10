@@ -38,7 +38,7 @@ services:
     build: ./nginx
     restart: always
     depends_on:
-      - app
+      - testapp
     ports:
       - "80:80"
 
