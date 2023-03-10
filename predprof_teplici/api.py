@@ -233,12 +233,3 @@ def add_data():
         print("Error: ", e)
 
     return SuccessResponse({})
-
-
-if __name__ == '__main__':
-    app = create_app()
-
-    # t = threading.Thread(target=asyncio.run)
-    # t.start()
-
-    app.run()

@@ -8,7 +8,7 @@ services:
       context: ./predprof_teplici
       dockerfile: Dockerfile
     command:
-        bash -c 'gunicorn --bind 0.0.0.0:5002 api:app'
+        bash -c 'gunicorn --bind 0.0.0.0:5002 __init__:app'
     restart: always
     expose:
       - "5002"
