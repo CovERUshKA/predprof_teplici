@@ -8,5 +8,6 @@ def home():
     return "hello world!"
 
 
-def run_app(_, __):
-    app.run(host='0.0.0.0', port=5000)
+def run_app():
+    # app.run(host='0.0.0.0', port=5000)
+    return app
