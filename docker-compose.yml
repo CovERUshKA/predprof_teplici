@@ -17,17 +17,6 @@ services:
     #   - ./main.db:/app/predprof_teplici/data/main.db
 
 
-  # testapp:
-  #   container_name: testapp
-  #   build:
-  #     context: ./testapp
-  #     dockerfile: Dockerfile
-  #   command:
-  #       bash -c 'gunicorn --bind 0.0.0.0:5002 main:app'
-  #   restart: always
-  #   expose:
-  #     - "5002"
-
   nginx:
     image: nginx:latest
     container_name: nginx
@@ -39,12 +28,11 @@ services:
       - "80:80"
 
 
-
-  # collector:
-  #   container_name: collector
-  #   build:
-  #     context: ./collect
-  #   restart: always
+  collector:
+    container_name: collector
+    build:
+      context: ./collect
+    restart: always
 
   #   volumes:
   #     - ./main.db:/app/predprof_teplici/data/main.db
