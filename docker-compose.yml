@@ -13,10 +13,20 @@ services:
     expose:
       - "5002"
 
-    # volumes:
-    #   - ./main.db:/app/predprof_teplici/data/main.db
+    volumes:
+      - ./data:./data
 
 
+  collector:
+    container_name: collector
+    build:
+      context: ./collect
+    restart: always
+
+    volumes:
+      - ./data:./data
+
+      
   nginx:
     image: nginx:latest
     container_name: nginx
@@ -28,11 +38,3 @@ services:
       - "80:80"
 
 
-  collector:
-    container_name: collector
-    build:
-      context: ./collect
-    restart: always
-
-  #   volumes:
-  #     - ./main.db:/app/predprof_teplici/data/main.db
