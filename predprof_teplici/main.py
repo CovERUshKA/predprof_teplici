@@ -12,6 +12,6 @@ def app(first, second):
     # t = threading.Thread(target=asyncio.run)
     # t.start()
 
-    app.run(host='0.0.0.0', port=4444)
+    app.run(host='0.0.0.0', port=5000)
 
     print("flask ended")    
