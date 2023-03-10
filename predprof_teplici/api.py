@@ -3,6 +3,8 @@ import requests
 import greenhouse_api
 from responses import SuccessResponse, ErrorResponse
 import database as db
+from __init__ import create_app 
+
 
 from flask import (
     Blueprint, request, abort, current_app
@@ -231,3 +233,12 @@ def add_data():
         print("Error: ", e)
 
     return SuccessResponse({})
+
+
+if __name__ == '__main__':
+    app = create_app()
+
+    # t = threading.Thread(target=asyncio.run)
+    # t.start()
+
+    app.run()
