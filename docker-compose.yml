@@ -7,7 +7,7 @@ services:
     build:
       context: ./predprof_teplici
     command:
-        'gunicorn --bind 0.0.0.0:4444 main:app'
+        'gunicorn --bind 0.0.0.0:4444 main'
     restart: always
     expose:
       - "4444"
