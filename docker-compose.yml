@@ -13,8 +13,8 @@ services:
     expose:
       - "5002"
 
-    volumes:
-      - ./data:./data
+    # volumes:
+    #   - ./data:./data
 
 
   collector:
@@ -23,10 +23,10 @@ services:
       context: ./collect
     restart: always
 
-    volumes:
-      - ./data:./data
+    # volumes:
+    #   - ./data:./data
 
-      
+
   nginx:
     image: nginx:latest
     container_name: nginx
