@@ -4,12 +4,10 @@ import threading
 from __init__ import create_app 
 
 
-def app(first, second):
+if __name__ == '__main__':
     app = create_app()
 
     # t = threading.Thread(target=asyncio.run)
     # t.start()
 
-    app.run(host='0.0.0.0', port=5001)
-
-    print("flask ended")    
+    app.run()

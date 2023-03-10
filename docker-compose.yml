@@ -2,35 +2,31 @@ version: "3.3"
 
 services:
   
-  # app:
-  #   container_name: app
-  #   build:
-  #     context: ./predprof_teplici
-  #     dockerfile: Dockerfile
-  #   command:
-  #       bash -c 'gunicorn --bind 0.0.0.0:5001 main:app'
-  #   restart: always
-  #   expose:
-  #     - "5001"
-
-  #   volumes:
-  #     # - ./data:/app/data/
-  #     - ./main.db:/app/predprof_teplici/data/main.db
-  #     # - ./data:/data
-  #   # env_file:
-  #   #     - ./.env
-
-  testapp:
-    container_name: testapp
+  app:
+    container_name: app
     build:
-      context: ./testapp
+      context: ./predprof_teplici
       dockerfile: Dockerfile
     command:
         bash -c 'gunicorn --bind 0.0.0.0:5002 main:app'
-        # 'gunicorn --bind 0.0.0.0:5000 main:run_app'
     restart: always
     expose:
       - "5002"
+
+    # volumes:
+    #   - ./main.db:/app/predprof_teplici/data/main.db
+
+
+  # testapp:
+  #   container_name: testapp
+  #   build:
+  #     context: ./testapp
+  #     dockerfile: Dockerfile
+  #   command:
+  #       bash -c 'gunicorn --bind 0.0.0.0:5002 main:app'
+  #   restart: always
+  #   expose:
+  #     - "5002"
 
   nginx:
     image: nginx:latest
