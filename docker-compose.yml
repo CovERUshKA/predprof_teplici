@@ -32,8 +32,8 @@ services:
     container_name: nginx
     build: ./nginx
     restart: always
-    # depends_on:
-    #   - app
+    depends_on:
+      - app
     ports:
       - "80:80"
 
