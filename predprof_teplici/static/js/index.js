@@ -1,5 +1,5 @@
 // MAIN URL
-const url = `http://127.0.0.1:80`;
+const url = ``; // only for development --> url = `http://127.0.0.1:80`;
 
 // ссылка для получения данных с сенсоров
 const url_sensors_data = `${url}/api/sensors_data?time_period=100`;
@@ -341,7 +341,7 @@ function update_params(){
 }
 async function get_data_from_api(){
     let response = await fetch(url_sensors_data);
-
+    
     if (response.ok){
         let json = await response.json();
         console.log(json);
