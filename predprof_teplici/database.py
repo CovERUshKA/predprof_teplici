@@ -141,5 +141,6 @@ def get_all_data(time_period):
         ground = cur.fetchall()
     finally:
         lock.release()
-
+    
+    print(f'{air=}\n{ground=}\n\n')
     return air, ground
