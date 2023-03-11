@@ -13,8 +13,8 @@ services:
     expose:
       - "5002"
 
-    # volumes:
-    #   - ./data:./data
+    volumes:
+      - ./data:/predprof_teplici/data
 
 
   collector:
@@ -23,8 +23,8 @@ services:
       context: ./collect
     restart: always
 
-    # volumes:
-    #   - ./data:./data
+    volumes:
+      - ./data:/collect/data
 
 
   nginx:
