@@ -8,7 +8,7 @@ lock = threading.Lock()
 con = sqlite3.connect("./data/main.db", check_same_thread=False)
 # Берём управление базой данных
 cur = con.cursor()
-cur.execute('PRAGMA journal_mod=wal')
+
 # Создаём таблицу данных земли, если не создана
 cur.execute("create table if not exists ground (id INTEGER PRIMARY KEY AUTOINCREMENT, sensor_id INTEGER NOT NULL, humidity FLOAT NOT NULL, timestamp BIGINT NOT NULL)")
 
