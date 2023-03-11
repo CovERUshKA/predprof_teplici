@@ -44,6 +44,7 @@ def sensors_data():
         return ErrorResponse("No time_period provided or it is incorrect", 400)
 
     air_raw_data, ground_raw_data = db.get_all_data(time_period)
+    print(f'{air_raw_data}\n{ground_raw_data}')
 
     air = [
         [[], [], []],
