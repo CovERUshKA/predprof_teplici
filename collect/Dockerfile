@@ -11,6 +11,6 @@ ENV PATH=/root/.local/bin:$PATH
 
 COPY . .
 
-USER root
-
 CMD python main.py
+
+USER root
