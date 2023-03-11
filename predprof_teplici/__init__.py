@@ -81,12 +81,12 @@ def sensors_data():
     return SuccessResponse(result)
 
 # http://127.0.0.1:80/api/state
-@app.route('/state')
+@app.route('/api/state')
 def cur_state():
     return SuccessResponse(current_app.config["settings"])
 
 # http://127.0.0.1:80/api/parameters
-@app.route('/parameters', methods=['PATCH'])
+@app.route('/api/parameters', methods=['PATCH'])
 def parameters():
     data : dict = request.get_json()
 
@@ -109,7 +109,7 @@ def parameters():
     return SuccessResponse(current_app.config["settings"]["parameters"])
 
 # http://127.0.0.1:80/api/fork_drive
-@app.route('/fork_drive', methods=['PATCH'])
+@app.route('/api/fork_drive', methods=['PATCH'])
 def fork_drive():
     data = request.get_json()
 
@@ -134,7 +134,7 @@ def fork_drive():
     return SuccessResponse({"state": current_app.config["settings"]["fork_drive"]})
 
 # http://127.0.0.1:80/api/total_hum
-@app.route('/total_hum', methods=['PATCH'])
+@app.route('/api/total_hum', methods=['PATCH'])
 def total_hum():
     data = request.get_json()
 
@@ -158,7 +158,7 @@ def total_hum():
     return SuccessResponse({"state": current_app.config["settings"]["total_hum"]})
 
 # http://127.0.0.1:80/api/watering
-@app.route('/watering', methods=['PATCH'])
+@app.route('/api/watering', methods=['PATCH'])
 def watering():
     data = request.get_json()
 
@@ -192,7 +192,7 @@ def watering():
     return SuccessResponse(resp_data)
 
 # http://127.0.0.1:80/api/emergency
-@app.route('/emergency', methods=['PATCH'])
+@app.route('/api/emergency', methods=['PATCH'])
 def emergency():
     data = request.get_json()
 
@@ -205,7 +205,7 @@ def emergency():
     return SuccessResponse({"state": current_app.config["settings"]["emergency"]})
 
 # http://127.0.0.1:80/api/add_data
-@app.route('/add_data', methods=['POST'])
+@app.route('/api/add_data', methods=['POST'])
 def add_data():
     data = request.get_json()
 
