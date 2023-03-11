@@ -37,8 +37,8 @@ def check_parameters(data, parameters):
 def sensors_data():
     arguments = request.args
 
-    time_period = arguments.get("time_period", None, type=int)
-
+    # time_period = arguments.get("time_period", None, type=int)
+    time_period = 100
     if time_period == None:
         return ErrorResponse("No time_period provided or it is incorrect", 400)
 
