@@ -142,4 +142,5 @@ def get_all_data(time_period):
     finally:
         lock.release()
 
+    print(f'{air=} {ground=}')
     return air, ground
