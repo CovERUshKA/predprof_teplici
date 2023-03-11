@@ -16,8 +16,9 @@ import database as db
 from flask import (
     Blueprint, request, abort, current_app
 )
-
-bp = Blueprint('api', __name__,)# url_prefix='/api')
+app = Flask(__name__, instance_relative_config=True)
+CORS(app)
+# app = Blueprint('api', __name__, url_prefix='/api')
 
 def check_parameters(data, parameters):
     try:
@@ -33,7 +34,7 @@ def check_parameters(data, parameters):
         abort(ErrorResponse(f"field \"{e.args[0][0]}\" incorrect", e.args[0][1]))
 
 # http://127.0.0.1:80/api/sensors_data?time_period=<time_in_seconds>
-@bp.route('/sensors_data')
+@app.route('/api/sensors_data')
 def sensors_data():
     arguments = request.args
 
@@ -80,12 +81,12 @@ def sensors_data():
     return SuccessResponse(result)
 
 # http://127.0.0.1:80/api/state
-@bp.route('/state')
+@app.route('/state')
 def cur_state():
     return SuccessResponse(current_app.config["settings"])
 
 # http://127.0.0.1:80/api/parameters
-@bp.route('/parameters', methods=['PATCH'])
+@app.route('/parameters', methods=['PATCH'])
 def parameters():
     data : dict = request.get_json()
 
@@ -108,7 +109,7 @@ def parameters():
     return SuccessResponse(current_app.config["settings"]["parameters"])
 
 # http://127.0.0.1:80/api/fork_drive
-@bp.route('/fork_drive', methods=['PATCH'])
+@app.route('/fork_drive', methods=['PATCH'])
 def fork_drive():
     data = request.get_json()
 
@@ -133,7 +134,7 @@ def fork_drive():
     return SuccessResponse({"state": current_app.config["settings"]["fork_drive"]})
 
 # http://127.0.0.1:80/api/total_hum
-@bp.route('/total_hum', methods=['PATCH'])
+@app.route('/total_hum', methods=['PATCH'])
 def total_hum():
     data = request.get_json()
 
@@ -157,7 +158,7 @@ def total_hum():
     return SuccessResponse({"state": current_app.config["settings"]["total_hum"]})
 
 # http://127.0.0.1:80/api/watering
-@bp.route('/watering', methods=['PATCH'])
+@app.route('/watering', methods=['PATCH'])
 def watering():
     data = request.get_json()
 
@@ -191,7 +192,7 @@ def watering():
     return SuccessResponse(resp_data)
 
 # http://127.0.0.1:80/api/emergency
-@bp.route('/emergency', methods=['PATCH'])
+@app.route('/emergency', methods=['PATCH'])
 def emergency():
     data = request.get_json()
 
@@ -204,7 +205,7 @@ def emergency():
     return SuccessResponse({"state": current_app.config["settings"]["emergency"]})
 
 # http://127.0.0.1:80/api/add_data
-@bp.route('/add_data', methods=['POST'])
+@app.route('/add_data', methods=['POST'])
 def add_data():
     data = request.get_json()
 
@@ -263,7 +264,7 @@ def add_data():
 #         return render_template("index.html")
 
 #     import api
-#     app.register_blueprint(api.bp)
+#     app.register_blueprint(api.app)
 
 #     return app
 
@@ -271,8 +272,7 @@ def add_data():
     # http://127.0.0.1:80
 
 
-app = Flask(__name__, instance_relative_config=True)
-CORS(app)
+
 
 app.config["settings"] = {
     "parameters": {
