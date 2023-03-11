@@ -14,7 +14,7 @@ services:
       - "5002"
 
     volumes:
-      - ./data:/predprof_teplici/data
+      - sqlite-volume:/predprof_teplici/data
 
 
   collector:
@@ -24,7 +24,7 @@ services:
     restart: always
 
     volumes:
-      - ./data:/collect/data
+      - sqlite-volume:/collect/data
 
 
   nginx:
@@ -37,4 +37,7 @@ services:
     ports:
       - "80:80"
 
+
+volumes:
+  sqlite-volume:
 
