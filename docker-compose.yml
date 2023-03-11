@@ -14,7 +14,7 @@ services:
   #     - "5002"
 
   #   volumes:
-      - sqlite-volume:/predprof_teplici/data
+      # - sqlite-volume:/predprof_teplici/data
 
 
   collector:
