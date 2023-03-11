@@ -1,13 +1,16 @@
+// MAIN URL
+const url = `http://127.0.0.1:80`;
+
 // ссылка для получения данных с сенсоров
-const url = "http://127.0.0.1:80/api/sensors_data?time_period=100";
+const url_sensors_data = `${url}/api/sensors_data?time_period=100`;
 // ссылка для получения состояний систем (полива, окна, увлажнения)
-const url_states = "http://127.0.0.1:80/api/state";
+const url_states = `${url}/api/state`;
 // ссылка для получения устновленных параметров T, H, Hb
-const url_system = `http://127.0.0.1:80/api/parameters`;
+const url_system = `${url}/api/parameters`;
 // ссылка для ручного ввода показаний с датчиков
-const url_set_sensors_data = "http://127.0.0.1:80/api/add_data";
+const url_set_sensors_data = `${url}/api/add_data`;
 // ссылка для смены графика показаний с датчиков
-const url_system_for_format = 'http://127.0.0.1:80/api/';
+const url_system_for_format = `${url}/api/`;
 
 let ctx = document.getElementById('GRAAAPH').getContext("2d");
 let table = document.getElementById('table');
@@ -337,7 +340,7 @@ function update_params(){
     states_elements["Hb_element"].set_value(states["parameters"]["Hb"]);
 }
 async function get_data_from_api(){
-    let response = await fetch(url);
+    let response = await fetch(url_sensors_data);
 
     if (response.ok){
         let json = await response.json();
