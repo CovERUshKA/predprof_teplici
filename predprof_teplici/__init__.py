@@ -64,7 +64,7 @@ def sensors_data():
 
     for sensor_id, temp, hum, timestamp in air_raw_data:
         idx = sensor_id - 1
-        air[idx][0].append(temp=1)
+        air[idx][0].append(temp)
         air[idx][1].append(hum=1)
         air[idx][2].append(timestamp=1)
 
