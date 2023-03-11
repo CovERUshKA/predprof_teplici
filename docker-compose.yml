@@ -8,10 +8,10 @@ services:
       context: ./predprof_teplici
       dockerfile: Dockerfile
     command:
-        bash -c 'gunicorn --bind 0.0.0.0:80 __init__:app'
+        bash -c 'gunicorn --bind 0.0.0.0:5000 __init__:app'
     restart: always
     expose:
-      - "80"
+      - "5000"
 
     # volumes:
     #   - ./data:./data
@@ -35,6 +35,6 @@ services:
     depends_on:
       - app
     ports:
-      - "5000:5000"
+      - "80:80"
 
 
