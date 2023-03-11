@@ -1,5 +1,5 @@
 // MAIN URL
-const url = `http://45.147.177.204`; // only for development --> url = `http://127.0.0.1:80`;
+const url = `http://45.147.177.204:5002`; // only for development --> url = `http://127.0.0.1:80`;
 
 // ссылка для получения данных с сенсоров
 const url_sensors_data = `${url}/api/sensors_data?time_period=100`;
