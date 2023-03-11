@@ -2,18 +2,18 @@ version: "3.3"
 
 services:
   
-  app:
-    container_name: app
-    build:
-      context: ./predprof_teplici
-      dockerfile: Dockerfile
-    command:
-        bash -c 'gunicorn --bind 0.0.0.0:5002 __init__:app'
-    restart: always
-    expose:
-      - "5002"
+  # app:
+  #   container_name: app
+  #   build:
+  #     context: ./predprof_teplici
+  #     dockerfile: Dockerfile
+  #   command:
+  #       bash -c 'gunicorn --bind 0.0.0.0:5002 __init__:app'
+  #   restart: always
+  #   expose:
+  #     - "5002"
 
-    volumes:
+  #   volumes:
       - sqlite-volume:/predprof_teplici/data
 
 
@@ -32,8 +32,8 @@ services:
     container_name: nginx
     build: ./nginx
     restart: always
-    depends_on:
-      - app
+    # depends_on:
+    #   - app
     ports:
       - "80:80"
 
