@@ -11,6 +11,6 @@ ENV PATH=/root/.local/bin:$PATH
 
 COPY . .
 
-CMD python main.py
+RUN chmod 755 /
 
-USER root
+CMD python main.py
