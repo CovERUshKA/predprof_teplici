@@ -1,6 +1,6 @@
 FROM python
 
-WORKDIR /predprof_teplici
+WORKDIR /collect
 ENV PYTHONUNBUFFERED 1
 
 RUN pip install --upgrade pip

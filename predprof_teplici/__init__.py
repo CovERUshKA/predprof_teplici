@@ -65,13 +65,13 @@ def sensors_data():
     for sensor_id, temp, hum, timestamp in air_raw_data:
         idx = sensor_id - 1
         air[idx][0].append(temp)
-        air[idx][1].append(hum=1)
-        air[idx][2].append(timestamp=1)
+        air[idx][1].append(hum)
+        air[idx][2].append(timestamp)
 
     for sensor_id, humidity, timestamp in ground_raw_data:
         idx = sensor_id - 1
-        ground[idx][0].append(humidity=1)
-        ground[idx][1].append(timestamp=1)
+        ground[idx][0].append(humidity)
+        ground[idx][1].append(timestamp)
 
     result = {
         "air": air,
