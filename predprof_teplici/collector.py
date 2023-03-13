@@ -9,16 +9,6 @@ from .rest import get_current_time
 
 end_working = False
 
-def get_air_temp_hum(id):
-    response = requests.get(f"{greenhouse_api.url_get_temp_hum}/{id}")
-    if response.status_code == 200:
-        data = response.json()
-        if type(data) == dict:
-            temp = data.get("temperature")
-            hum = data.get("humidity")
-            return temp, hum
-    return None, None
-
 # Влажность почвы
 async def aget_ground_hum(session : aiohttp.ClientSession, id):
     try:
