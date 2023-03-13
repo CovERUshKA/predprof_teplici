@@ -1,7 +1,6 @@
 from . import greenhouse_api
 import aiohttp
 import asyncio
-import requests
 from . import database as db
 import sqlite3
 import time
