@@ -22,7 +22,7 @@ def get_air_temp_hum(id):
 # Влажность почвы
 async def aget_ground_hum(session : aiohttp.ClientSession, id):
     try:
-        async with session.get(f"{greenhouse_api.url_get_hum}/{id}") as resp:
+        async with session.get(f"{greenhouse_api.url_get_hum}/{id}", headers={"X-Auth-Token": greenhouse_api.auth_token}) as resp:
             jsoned = {}
             if resp.status == 200:
                 jsoned = await resp.json(content_type=None)
@@ -35,7 +35,7 @@ async def aget_ground_hum(session : aiohttp.ClientSession, id):
 # Влажность и температура воздуха
 async def aget_air_temp_hum(session : aiohttp.ClientSession, id):
     try:
-        async with session.get(f"{greenhouse_api.url_get_temp_hum}/{id}") as resp:
+        async with session.get(f"{greenhouse_api.url_get_temp_hum}/{id}", headers={"X-Auth-Token": greenhouse_api.auth_token}) as resp:
             jsoned = {}
             if resp.status == 200:
                 jsoned = await resp.json(content_type=None)

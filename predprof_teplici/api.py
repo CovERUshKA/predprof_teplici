@@ -111,11 +111,15 @@ def fork_drive():
         return ErrorResponse("field \"state\" incorrect", 400)
 
     if state != current_app.config["settings"]["fork_drive"]:
+        headers = {
+            "X-Auth-Token": greenhouse_api.auth_token
+        }
+
         parameters = {
             "state": state
         }
 
-        resp = requests.patch(greenhouse_api.url_patch_fork_drive, params=parameters)
+        resp = requests.patch(greenhouse_api.url_patch_fork_drive, headers=headers, params=parameters)
         if resp.status_code == 200:
             current_app.config["settings"]["fork_drive"] = state
         else:
@@ -135,11 +139,15 @@ def total_hum():
         return ErrorResponse("field \"state\" incorrect", 400)
 
     if state != current_app.config["settings"]["total_hum"]:
+        headers = {
+            "X-Auth-Token": greenhouse_api.auth_token
+        }
+
         parameters = {
             "state": state
         }
 
-        resp = requests.patch(greenhouse_api.url_patch_total_hum, params=parameters)
+        resp = requests.patch(greenhouse_api.url_patch_total_hum, headers=headers, params=parameters)
         if resp.status_code == 200:
             current_app.config["settings"]["total_hum"] = state
         else:
@@ -163,12 +171,16 @@ def watering():
         return ErrorResponse("field \"state\" incorrect", 400)
 
     if state != current_app.config["settings"]["watering"][id - 1]:
+        headers = {
+            "X-Auth-Token": greenhouse_api.auth_token
+        }
+
         parameters = {
             "id": id,
             "state": state
         }
 
-        resp = requests.patch(greenhouse_api.url_patch_watering, params=parameters)
+        resp = requests.patch(greenhouse_api.url_patch_watering, headers=headers, params=parameters)
         if resp.status_code == 200:
             current_app.config["settings"]["watering"][id - 1] = state
         else:
