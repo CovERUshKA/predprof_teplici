@@ -8,7 +8,7 @@ services:
       context: ./predprof_teplici
       dockerfile: Dockerfile
     command:
-        bash -c 'gunicorn --bind 0.0.0.0:5002 __init__:app'
+        bash -c 'gunicorn --bind 0.0.0.0:5002 "__init__:create_app()"'
     restart: always
     expose:
       - "5002"
@@ -36,5 +36,3 @@ services:
       - app
     ports:
       - "80:80"
-
-

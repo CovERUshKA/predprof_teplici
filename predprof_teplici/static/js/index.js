@@ -105,6 +105,7 @@ class Parametr_Element {
             this.element.innerHTML = this.text + " " + "-";
         }
     }
+
 }
 */
 class State_System_Element {
@@ -429,6 +430,7 @@ var chart = new Chart(ctx, {
                 },
                 afterTickToLabelConversion: function(data){
                     let xLabels = data.ticks;
+
                     xLabels.forEach(function (labels, i) {
                         xLabels[i] = xLabels[i] + ' °C';
                     });
@@ -476,6 +478,7 @@ function update_table(){
                 <td>${data.air[2][0][i]}</td>
                 <td>${data.air[3][0][i]}</td>
                 <td>${data.air[4][0][i]}</td>
+
                 <td>${data.air[0][1][i]}</td>
                 <td>${data.air[1][1][i]}</td>
                 <td>${data.air[2][1][i]}</td>
