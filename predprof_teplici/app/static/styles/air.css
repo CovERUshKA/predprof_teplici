@@ -1,0 +1,37 @@
+.air .card{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.air .card img{
+    height: 50px;
+}
+.air .card .data{
+    display: flex;
+}
+.air .card button{
+    width: 55px;
+    height: 55px;
+    border-radius: 5px;
+}
+.air button:hover{
+    background-color: #d1cfcf;
+}
+.air .card button img{
+    width: 100%;
+    height: 100%;
+}
+.air h3{
+    font-size: 1.5em;
+}
+.air h2{
+    font-size: 2.3em;
+    margin: 0 5px;
+    min-width: 130px;
+}
+.air .name{
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-bottom: 30px;
+}

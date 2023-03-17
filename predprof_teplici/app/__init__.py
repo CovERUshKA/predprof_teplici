@@ -23,7 +23,7 @@ def create_app():
     def index():
         return render_template("index.html")
 
-    import api
+    from . import api
     app.register_blueprint(api.bp)
 
     return app

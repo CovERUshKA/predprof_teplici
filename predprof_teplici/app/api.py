@@ -1,8 +1,8 @@
 import sqlite3
 import requests
-import greenhouse_api
-from responses import SuccessResponse, ErrorResponse
-import database as db
+from . import greenhouse_api
+from .responses import SuccessResponse, ErrorResponse
+from . import database as db
 
 from flask import (
     Blueprint, request, abort, current_app
