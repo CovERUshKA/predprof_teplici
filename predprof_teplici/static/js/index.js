@@ -395,6 +395,8 @@ var chart = new Chart(ctx, {
         tooltips: {
             mode: 'index',
             intersect: false,
+            titleFontSize: 20,
+            bodyFontSize: 20
         },
         hover: {
             mode: 'index',
